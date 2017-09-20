@@ -5,12 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-@Path("/StudentService")
 public class StudentService {
 
 	private StudentDao studentDao = new StudentDao();
@@ -61,9 +55,6 @@ public class StudentService {
 		}
 	}
 
-	@GET
-	@Path("/students")
-	@Produces(MediaType.APPLICATION_XML)
 	public List<Student> list() throws StudentServiceException {
 		try {
 			List<Student> students = studentDao.list();

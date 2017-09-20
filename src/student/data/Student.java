@@ -2,10 +2,6 @@ package student.data;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "student")
 public class Student {
 
 	private String id;
@@ -83,7 +79,6 @@ public class Student {
 		return id;
 	}
 
-	@XmlElement
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -92,7 +87,6 @@ public class Student {
 		return name;
 	}
 
-	@XmlElement
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -101,7 +95,7 @@ public class Student {
 		return gender;
 	}
 
-	@XmlElement
+	
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
@@ -110,7 +104,6 @@ public class Student {
 		return birthDate;
 	}
 
-	@XmlElement
 	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
 	}
@@ -119,7 +112,6 @@ public class Student {
 		return joinDate;
 	}
 
-	@XmlElement
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
@@ -128,7 +120,6 @@ public class Student {
 		return standard;
 	}
 
-	@XmlElement
 	public void setStandard(int i) {
 		this.standard = i;
 	}
@@ -137,7 +128,6 @@ public class Student {
 		return division;
 	}
 
-	@XmlElement
 	public void setDivision(String division) {
 		this.division = division;
 	}
@@ -146,7 +136,6 @@ public class Student {
 		return rollNumber;
 	}
 
-	@XmlElement
 	public void setRollNumber(int rollNumber) {
 		this.rollNumber = rollNumber;
 	}
