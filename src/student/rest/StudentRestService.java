@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import student.data.ServiceException;
 import student.data.Student;
 import student.data.StudentService;
 import student.data.StudentServiceException;
@@ -23,6 +24,7 @@ public class StudentRestService extends HttpServlet {
 		super();
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		StudentService studentService = new StudentService();
@@ -44,26 +46,29 @@ public class StudentRestService extends HttpServlet {
 
 					out.print(new Gson().toJson(studentService.findById(id)));
 				} catch (StudentServiceException e) {
-					response.sendError(response.SC_NOT_FOUND,
+					response.sendError(HttpServletResponse.SC_NOT_FOUND,
 				            "NOT DATA FOUND");
 				}
 			}
 		}
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println(request.getMethod());
 		
-		Student obj = new Gson().fromJson(request.getReader(), Student.class);
-
-		try (PrintWriter out = response.getWriter()) {
-			out.print(request.getMethod());
-			System.out.println("possttttt");
-
+		Student student = new Gson().fromJson(request.getReader(), Student.class);
+		StudentService studentService = new StudentService();
+		try {
+			studentService.add(student);
+		} catch (ServiceException e) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND,
+		            "BAD REQUEST");
 		}
 	}
 
+	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try (PrintWriter out = response.getWriter()) {
@@ -73,6 +78,7 @@ public class StudentRestService extends HttpServlet {
 		}
 	}
 
+	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try (PrintWriter out = response.getWriter()) {
