@@ -51,11 +51,11 @@ public class StudentRestService extends HttpServlet {
 		String[] pathParts = pathInfo.split("/");
 		try {
 			type = pathParts[1];
-			if(type.equals("students")){
-				type="student.data.StudentService";
+			if (type.equals("students")) {
+				type = "student.data.StudentService";
 			}
-			if(type.equals("users")){
-				type="student.web.UserService";
+			if (type.equals("users")) {
+				type = "student.web.UserService";
 			}
 		} catch (IndexOutOfBoundsException e) {
 			return "";
@@ -63,102 +63,73 @@ public class StudentRestService extends HttpServlet {
 		return type;
 
 	}
-	
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		StudentService studentService = new StudentService();
-		UserService userService=new UserService();
 		response.setContentType("application/json;charset=UTF-8");
 		String id = getPathParameterId(request);
 		String type = getPathParameterClassType(request);
-		
-	
-		
-		// REFLECTION		 
-		Method[] methods = StudentService.class.getMethods();
-		for (Method method : methods) {
-			System.out.println("method = " + method.getName());
-		}
-		try {
-			System.out.println(Class.forName("student.data.Student"));
-			System.out.println(Class.forName("student.data.Student").getSimpleName());
-			System.out.println(Class.forName("student.data.Student").getFields());
-			Method method;
-			try {
-				method = StudentService.class.getMethod("list");
-				
-				try {
-					Class<?> c = Class.forName(type);
-					Constructor<?> cons = c.getConstructor(String.class);
-					Class<?> clazz = Class.forName(className);
-					Constructor<?> ctor = clazz.getConstructor(String.class);
-					Object object = ctor.newInstance(new Object[] { ctorArgument });
-					//System.out.println(method.invoke(studentService));
-					System.out.println(StudentService.class.getMethod("findById",String.class).invoke(studentService, id));
-					System.out.println(c.getMethod("findById",String.class).invoke(cons.newInstance(""), id));
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			} catch (NoSuchMethodException | SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		// REFLECTION END
-		
-			if (type.isEmpty()) {
+		if (type.isEmpty()) {
 			try (PrintWriter out = response.getWriter()) {
 				out.println("Enter Proper Path");
 			}
 
 		} else {
-			if("students".equals(type)){
 			if (id == null || id.isEmpty()) {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-
-						out.print(new Gson().toJson(studentService.list()));
-					} catch (StudentServiceException e) {
+						operation(id, type, "list", response);
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			} else {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-						List<Student> st=new ArrayList<>();
-						st.add(studentService.findById(id));
-						out.print(new Gson().toJson(st));
-					} catch (StudentServiceException e) {
+						operation(id, type, "findById", response);
+					} catch (Exception e) {
 						response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
 					}
 				}
 			}
-			}
-			else if("users".equals(type)){
-				try (PrintWriter out = response.getWriter()) {
-					try {
-						List<User> st=new ArrayList<>();
-						st.add(userService.findById(id));
-					out.print(new Gson().toJson(st));
-					} catch (UserServiceException e) {
-						response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
-					}
+
+		}
+	}
+
+	public void operation(String id, String type, String methode, HttpServletResponse response) {
+		try {
+			try (PrintWriter out = response.getWriter()) {
+
+				Class<?> clazz = Class.forName(type);
+				if ("findById".equals(methode)) {
+
+					out.print(new Gson().toJson(clazz.getMethod("findById", String.class)
+							.invoke(clazz.getConstructor().newInstance(), id)));
+				} else if ("list".equals(methode)) {
+					out.print(new Gson().toJson(clazz.getMethod("list").invoke(clazz.getConstructor().newInstance())));
 				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 

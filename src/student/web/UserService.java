@@ -16,6 +16,7 @@ public class UserService {
 			throw new UserServiceException(e.getMessage(), e);
 		}
 	}
+	
 
 	public User findById(String userId) throws UserServiceException {
 
