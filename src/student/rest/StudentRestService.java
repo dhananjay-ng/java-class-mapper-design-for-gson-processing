@@ -45,7 +45,7 @@ public class StudentRestService extends HttpServlet {
 		return id;
 	}
 
-	public String getPathParameterClassType(HttpServletRequest request) {
+	public String getPathParameterClass(HttpServletRequest request) {
 		String type;
 		String pathInfo = request.getPathInfo();
 		String[] pathParts = pathInfo.split("/");
@@ -69,7 +69,7 @@ public class StudentRestService extends HttpServlet {
 			throws ServletException, IOException {
 		response.setContentType("application/json;charset=UTF-8");
 		String id = getPathParameterId(request);
-		String type = getPathParameterClassType(request);
+		String type = getPathParameterClass(request);
 		if (type.isEmpty()) {
 			try (PrintWriter out = response.getWriter()) {
 				out.println("Enter Proper Path");
@@ -79,7 +79,7 @@ public class StudentRestService extends HttpServlet {
 			if (id == null || id.isEmpty()) {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-						operation(id, type, "list", response);
+						operation(id, type, "list", request, response);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -87,7 +87,7 @@ public class StudentRestService extends HttpServlet {
 			} else {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-						operation(id, type, "findById", response);
+						operation(id, type, "findById", request, response);
 					} catch (Exception e) {
 						response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
 					}
@@ -97,20 +97,35 @@ public class StudentRestService extends HttpServlet {
 		}
 	}
 
-	public void operation(String id, String type, String methode, HttpServletResponse response) {
+	public void operation(String id, String type, String methode, HttpServletRequest request,
+			HttpServletResponse response) {
 		try {
 			try (PrintWriter out = response.getWriter()) {
 
 				Class<?> clazz = Class.forName(type);
 				if ("findById".equals(methode)) {
-
-					out.print(new Gson().toJson(clazz.getMethod("findById", String.class)
-							.invoke(clazz.getConstructor().newInstance(), id)));
+					List<Object> lt = new ArrayList<>();
+					lt.add(clazz.getMethod("findById", String.class).invoke(clazz.getConstructor().newInstance(), id));
+					out.print(new Gson().toJson(lt));
+				
 				} else if ("list".equals(methode)) {
 					out.print(new Gson().toJson(clazz.getMethod("list").invoke(clazz.getConstructor().newInstance())));
+				
+				} else if ("add".equals(methode)) {
+					
+					if (Class.forName(type).equals(StudentService.class)) {
+						clazz.getMethod("add", Student.class).invoke(clazz.getConstructor().newInstance(),
+								new Gson().fromJson(request.getReader(), Student.class));
+						out.println("Student with id ="+id+" added.");
+					
+					} else if (Class.forName(type).equals(UserService.class)) {
+						clazz.getMethod("add", User.class).invoke(clazz.getConstructor().newInstance(),
+								new Gson().fromJson(request.getReader(), User.class));
+						out.println("User with id ="+id+" added.");
+
+					}
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (InstantiationException e) {
@@ -123,12 +138,8 @@ public class StudentRestService extends HttpServlet {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException | SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
+		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -136,8 +147,17 @@ public class StudentRestService extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println(request.getMethod());
+		String id = getPathParameterId(request);
+		String type = getPathParameterClass(request);
+		if (type.isEmpty()) {
+			try (PrintWriter out = response.getWriter()) {
+				out.println("Enter Proper Path");
+			}
+		} else {
+			operation(id, type, "add", request, response);
 
+		}
+		/*
 		Student student = new Gson().fromJson(request.getReader(), Student.class);
 		StudentService studentService = new StudentService();
 		try {
@@ -145,7 +165,7 @@ public class StudentRestService extends HttpServlet {
 		} catch (ServiceException e) {
 
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST");
-		}
+		}*/
 	}
 
 	@Override

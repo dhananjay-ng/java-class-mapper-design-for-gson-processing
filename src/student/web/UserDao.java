@@ -4,8 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import student.data.DbUtil;
+import student.data.Student;
+import student.data.StudentDaoException;
+import student.data.StudentNotFoundException;
 
 public class UserDao {
 	
@@ -100,5 +105,68 @@ public class UserDao {
 
 		return cloneUser;
 	}
+	
+	public List<User> list() throws UserDaoException {
+		/*if (map.isEmpty()) {
+			throw new StudentNotFoundException("Students Does Not Exists");
+		}*/
+		User user=new User();
+		try {
+			conn = DbUtil.getConnection();
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			final String queryCheck = "select "//
+					+ "count(*) from \"user\"";
+			PreparedStatement ps = conn.prepareStatement(queryCheck);
+			ResultSet resultSet;
+			resultSet = ps.executeQuery();
+			if (resultSet.next()) {
+				final int count = resultSet.getInt(1);
+				if (count == 0) {
+					conn.close();
+
+					throw new UserNotFoundException("DATABASE IS EMPTY");
+
+				}
+				resultSet.close();
+				ps.close();
+				
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		List<User> userList = new ArrayList<>();
+		/*
+		Iterator<Map.Entry<String, Student>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<String, Student> pair = it.next();
+			studentList.add((pair.getValue()));
+		}
+		return new ArrayList<Student>(map.values());
+		*/
+		try {
+			final String queryCheck = "select "//
+					+ "* from \"user\"";
+			PreparedStatement ps = conn.prepareStatement(queryCheck);
+
+			ResultSet resultSet;
+
+			resultSet = ps.executeQuery();
+			while(resultSet.next()) {
+				user.setUserId(resultSet.getString(1)); 
+				user.setUserName(resultSet.getString(2));
+				user.setPassword("*");
+				userList.add(cloneUser(user));
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		return userList;
+	}
+
 
 }
