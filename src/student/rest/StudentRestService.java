@@ -1,13 +1,13 @@
 package student.rest;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +23,6 @@ import student.data.StudentService;
 import student.data.StudentServiceException;
 import student.web.User;
 import student.web.UserService;
-import student.web.UserServiceException;
 
 @WebServlet("/rest/*")
 public class StudentRestService extends HttpServlet {
@@ -51,16 +50,31 @@ public class StudentRestService extends HttpServlet {
 		String[] pathParts = pathInfo.split("/");
 		try {
 			type = pathParts[1];
-			if (type.equals("students")) {
+			FileReader reader;
+
+			reader = new FileReader("src/config.properties");
+			Properties p=new Properties();  
+		    p.load(reader);  
+		      
+		    return p.getProperty(type);  
+			/*if (type.equals("students")) {
 				type = "student.data.StudentService";
 			}
 			if (type.equals("users")) {
 				type = "student.web.UserService";
-			}
-		} catch (IndexOutOfBoundsException e) {
+			}*/
+		} 
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	     catch (IndexOutOfBoundsException e) {
 			return "";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return type;
+		return "ERROR";
 
 	}
 

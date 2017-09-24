@@ -1,45 +1,31 @@
 package student.rest;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public class RestTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		Properties prop = new Properties();
-    	InputStream input = null;
 
-    	try {
+		try {
+			FileReader reader;
 
-    		String filename = "config.properties";
-    		input = RestTest.class.getClassLoader().getResourceAsStream(filename);
-    		if(input==null){
-    	            System.out.println("Sorry, unable to find " + filename);
-    		    return;
-    		}
+			reader = new FileReader("src/config.properties");
+			Properties p=new Properties();  
+		    p.load(reader);  
+		      
+		    System.out.println(p.getProperty("users"));  
+		    System.out.println(p.getProperty("students"));  
 
-    		//load a properties file from class path, inside static method
-    		prop.load(input);
-
-                //get the property value and print it out
-                System.out.println(prop.getProperty("database"));
-    	        System.out.println(prop.getProperty("dbuser"));
-    	        System.out.println(prop.getProperty("dbpassword"));
-
-    	} catch (IOException ex) {
-    		ex.printStackTrace();
-        } finally{
-        	if(input!=null){
-        		try {
-				input.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        	}
-        }
-
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	      
+		    
 
 	}
 
