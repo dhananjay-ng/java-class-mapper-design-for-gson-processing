@@ -3,6 +3,7 @@ package student.rest;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -51,30 +52,24 @@ public class StudentRestService extends HttpServlet {
 		try {
 			type = pathParts[1];
 			FileReader reader;
-
-			reader = new FileReader("src/config.properties");
-			Properties p=new Properties();  
-		    p.load(reader);  
-		      
-		    return p.getProperty(type);  
-			/*if (type.equals("students")) {
-				type = "student.data.StudentService";
+			InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
+			if (is != null) {
+				Properties p = new Properties();
+				p.load(is);
+				return p.getProperty(type);
 			}
-			if (type.equals("users")) {
-				type = "student.web.UserService";
-			}*/
-		} 
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}  
-	     catch (IndexOutOfBoundsException e) {
+			return "";
+
+		} catch (IndexOutOfBoundsException e) {
 			return "";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "ERROR";
+		return "";
 
 	}
 
@@ -121,21 +116,21 @@ public class StudentRestService extends HttpServlet {
 					List<Object> lt = new ArrayList<>();
 					lt.add(clazz.getMethod("findById", String.class).invoke(clazz.getConstructor().newInstance(), id));
 					out.print(new Gson().toJson(lt));
-				
+
 				} else if ("list".equals(methode)) {
 					out.print(new Gson().toJson(clazz.getMethod("list").invoke(clazz.getConstructor().newInstance())));
-				
+
 				} else if ("add".equals(methode)) {
-					
+
 					if (Class.forName(type).equals(StudentService.class)) {
 						clazz.getMethod("add", Student.class).invoke(clazz.getConstructor().newInstance(),
 								new Gson().fromJson(request.getReader(), Student.class));
-						out.println("Student with id ="+id+" added.");
-					
+						out.println("Student with id =" + id + " added.");
+
 					} else if (Class.forName(type).equals(UserService.class)) {
 						clazz.getMethod("add", User.class).invoke(clazz.getConstructor().newInstance(),
 								new Gson().fromJson(request.getReader(), User.class));
-						out.println("User with id ="+id+" added.");
+						out.println("User with id =" + id + " added.");
 
 					}
 				}
@@ -172,14 +167,13 @@ public class StudentRestService extends HttpServlet {
 
 		}
 		/*
-		Student student = new Gson().fromJson(request.getReader(), Student.class);
-		StudentService studentService = new StudentService();
-		try {
-			studentService.add(student);
-		} catch (ServiceException e) {
-
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST");
-		}*/
+		 * Student student = new Gson().fromJson(request.getReader(),
+		 * Student.class); StudentService studentService = new StudentService();
+		 * try { studentService.add(student); } catch (ServiceException e) {
+		 * 
+		 * response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+		 * "BAD REQUEST"); }
+		 */
 	}
 
 	@Override
