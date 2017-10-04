@@ -1,5 +1,6 @@
 package student.json.mapper;
 
 public enum MappingSource {
-    FORM, REQUEST_PARAMETER, MAP
+    JSON, REQUEST_PARAMETER, MAP
+    
 }

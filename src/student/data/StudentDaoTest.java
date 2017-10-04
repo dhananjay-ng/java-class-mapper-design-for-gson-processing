@@ -32,7 +32,7 @@ public class StudentDaoTest {
 		Student student1 = StudentTest.createStudent1();
 		Student student3 = StudentTest.createStudent3();
 		StudentDao studentDao = new StudentDao();
-		/*try {
+		try {
 			studentDao.add(student1);
 			assertTrue("Adding student1", studentDao.get(student1.getId()).getId().equals(student1.getId()));
 		} catch (DaoException e) {
@@ -48,7 +48,7 @@ public class StudentDaoTest {
 			e.printStackTrace();
 		}
 		
-		/*
+	
 		try {
 		student1.setName("dkndn");
 			studentDao.update(student1);
@@ -64,13 +64,13 @@ public class StudentDaoTest {
 			for (Student s : studentList) {
 				System.out.println(s.getName());
 			}
-			studentDao.remove(student1);
-			studentDao.remove(student3);
+			//studentDao.remove(student1);
+			//studentDao.remove(student3);
 
 
 		} catch (DaoException e) {
 			e.printStackTrace();
-		}*/
+		}
 
 		
 	}

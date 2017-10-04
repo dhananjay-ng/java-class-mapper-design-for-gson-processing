@@ -14,6 +14,12 @@ public class UserTest {
 		
 
 		UserDao test=new UserDao();
+		try {
+			test.add(user1);
+		} catch (UserDaoException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	
 		try {
 			System.out.println(test.get(user1.getUserId()).getUserName());
