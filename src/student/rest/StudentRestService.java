@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import student.data.Service;
 import student.data.ServiceException;
 import student.data.Student;
 import student.data.StudentService;
-import student.data.StudentServiceException;
 import student.web.User;
 import student.web.UserService;
 
@@ -107,34 +108,39 @@ public class StudentRestService extends HttpServlet {
 	}
 
 	public void operation(String id, String type, String methode, HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response ) {
 		try {
 			try (PrintWriter out = response.getWriter()) {
 
-				Class<?> clazz = Class.forName(type);
+				Constructor c = Class.forName(type).getConstructor();
+				Service service = (Service) c.newInstance();
+				
+				try{
 				if ("findById".equals(methode)) {
 					List<Object> lt = new ArrayList<>();
-					lt.add(clazz.getMethod("findById", String.class).invoke(clazz.getConstructor().newInstance(), id));
+					lt.add(service.findById(id));
 					out.print(new Gson().toJson(lt));
 
 				} else if ("list".equals(methode)) {
-					out.print(new Gson().toJson(clazz.getMethod("list").invoke(clazz.getConstructor().newInstance())));
+					out.print(new Gson().toJson(service.list()));
 
 				} else if ("add".equals(methode)) {
 
 					if (Class.forName(type).equals(StudentService.class)) {
-						clazz.getMethod("add", Student.class).invoke(clazz.getConstructor().newInstance(),
-								new Gson().fromJson(request.getReader(), Student.class));
+						service.add(new Gson().fromJson(request.getReader(), Student.class));			
 						out.println("Student with id =" + id + " added.");
 
 					} else if (Class.forName(type).equals(UserService.class)) {
-						clazz.getMethod("add", User.class).invoke(clazz.getConstructor().newInstance(),
-								new Gson().fromJson(request.getReader(), User.class));
+						service.add(new Gson().fromJson(request.getReader(), User.class));
+								
 						out.println("User with id =" + id + " added.");
 
 					}
 				}
-			} catch (IOException e) {
+			} catch(ServiceException e){
+				
+			}
+				}catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (InstantiationException e) {
@@ -180,7 +186,7 @@ public class StudentRestService extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		Student student = new Gson().fromJson(request.getReader(), Student.class);
-		StudentService studentService = new StudentService();
+		Service studentService = new StudentService();
 		try {
 			studentService.update(student);
 		} catch (ServiceException e) {
@@ -194,11 +200,11 @@ public class StudentRestService extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String id = (String) request.getParameter("id");
-		StudentService service = new StudentService();
+		Service service = new StudentService();
 		try {
 			service.remove(service.findById(id));
 
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "NO STUDENT FOUND");
 
 		}

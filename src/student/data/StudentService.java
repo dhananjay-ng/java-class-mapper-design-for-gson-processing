@@ -5,17 +5,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class StudentService {
+public class StudentService implements Service {
 
 	private StudentDao studentDao = new StudentDao();
 	private StudentValidator studentValidator;
 	List<String> messages = new ArrayList<>();
 
-	public void add(Student student) throws ServiceException {
+	@Override
+	public void add(Object obj) throws ServiceException {
 		String id = studentDao.returnLastId();
 		Integer id1 = Integer.parseInt(id);
 		id1 += 1;
 		id = id1.toString();
+		Student student=(Student) obj;
 		student.setId(id);
 		studentValidator = new StudentValidator(student, this);
 		studentValidator.validateStudent(messages, student);
@@ -31,8 +33,12 @@ public class StudentService {
 
 	}
 
-	public void update(Student student) throws ServiceException {
+	@Override
+	public void update(Object obj) throws ServiceException {
+		Student student=(Student) obj;
+
 		studentValidator = new StudentValidator(student, this);
+
 		studentValidator.validateStudent(messages, student);
 		if (messages.size() > 0) {
 			throw new ValidatorException("validateForUpdate() errors", messages);
@@ -45,7 +51,9 @@ public class StudentService {
 		}
 	}
 
-	public void remove(Student student) throws StudentServiceException {
+	@Override
+	public void remove(Object obj) throws ServiceException {
+		Student student=(Student) obj;
 		try {
 			studentDao.remove(student);
 		} catch (StudentDaoException e) {
@@ -55,7 +63,8 @@ public class StudentService {
 		}
 	}
 
-	public List<Student> list() throws StudentServiceException {
+	@Override
+	public List<Student> list() throws ServiceException {
 		try {
 			List<Student> students = studentDao.list();
 			Collections.sort(students, new Comparator<Student>() {
@@ -72,7 +81,8 @@ public class StudentService {
 		}
 	}
 
-	public Student findById(String id) throws StudentServiceException {
+	@Override
+	public Student findById(String id) throws ServiceException {
 
 		try {
 			return studentDao.get(id);

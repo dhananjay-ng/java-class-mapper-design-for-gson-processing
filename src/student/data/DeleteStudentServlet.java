@@ -15,12 +15,12 @@ public class DeleteStudentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String id = (String) request.getParameter("id");
-		StudentService service = new StudentService();
+		Service service = new StudentService();
 		try {
 			service.remove(service.findById(id));
 			request.getRequestDispatcher("/listStudents").forward(request, response);
 
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			request.getRequestDispatcher("/listStudents").forward(request, response);
 
 		}

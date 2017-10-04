@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/editStudent")
 public class EditStudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private StudentService service = new StudentService();
+	private Service service = new StudentService();
 	List<String> messages = new ArrayList<>();
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -22,12 +22,12 @@ public class EditStudentServlet extends HttpServlet {
 		messages.clear();
 		String id = request.getParameter("id");
 		try {
-			Student student = service.findById(id);
+			Student student = (Student) service.findById(id);
 			Map<String, String> form = StudentFormToBoMapping.mapBoToForm(student);
 			EditStudentServlet.forwardToView(form, messages, request, response);
 			return;
 
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			e.printStackTrace();
 			return;
 

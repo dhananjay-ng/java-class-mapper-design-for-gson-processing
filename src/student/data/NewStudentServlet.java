@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/newStudent")
 public class NewStudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private StudentService service = new StudentService();
+	private Service service = new StudentService();
 	List<String> messages = new ArrayList<>();
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)

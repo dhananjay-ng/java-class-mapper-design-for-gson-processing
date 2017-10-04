@@ -14,7 +14,7 @@ public class StudentServiceTest {
 		Student student2 = StudentTest.createStudent1();
 		Student student3 = StudentTest.createStudent3();
 		Student student4 = StudentTest.createStudent4();
-		StudentService studentService = new StudentService();
+		Service studentService = new StudentService();
 
 		try {
 			try {
@@ -23,9 +23,9 @@ public class StudentServiceTest {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			assertTrue("Adding student1 ", studentService.findById(student1.getId()).getId() == student1.getId());
+			assertTrue("Adding student1 ", ((Student)studentService.findById(student1.getId())).getId() == student1.getId());
 
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -38,7 +38,7 @@ public class StudentServiceTest {
 		
 		try {
 			studentService.add(student3);
-			assertTrue("\nAdding student3 ", studentService.findById(student3.getId()).getId() == student3.getId());
+			assertTrue("\nAdding student3 ", ((Student)studentService.findById(student3.getId())).getId() == student3.getId());
 
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -46,7 +46,7 @@ public class StudentServiceTest {
 
 		try {
 			studentService.add(student4);
-			assertTrue("\nAdding student4 ", studentService.findById(student4.getId()).getId() == student4.getId());
+			assertTrue("\nAdding student4 ", ((Student)studentService.findById(student4.getId())).getId() == student4.getId());
 
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
@@ -55,14 +55,14 @@ public class StudentServiceTest {
 
 		List<Student> studentList;
 		try {
-			studentList = studentService.list();
+			studentList = (List<Student>) studentService.list();
 			message("call to list() should return soreted student list");
 			for (Student s : studentList) {
 				System.out.println(s.getName());
 			}
 			assertTrue("Testing wheather list is sorted", isSorted(studentList));
 
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

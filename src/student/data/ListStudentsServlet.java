@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/listStudents")
 public class ListStudentsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	StudentService studentService = new StudentService();
+	Service studentService = new StudentService();
 	List<String> messages = new ArrayList<>();
 
 	@Override
@@ -22,7 +22,7 @@ public class ListStudentsServlet extends HttpServlet {
 
 		try {
 			request.setAttribute("students", studentService.list());
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
 		request.getRequestDispatcher("/WEB-INF/pages/list_students.jsp").forward(request, response);

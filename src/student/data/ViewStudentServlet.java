@@ -17,15 +17,15 @@ public class ViewStudentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String id = (String) request.getParameter("id");
-		StudentService service = new StudentService();
+		Service service = new StudentService();
 		try {
-			Student s = service.findById(id);
+			Student s = (Student) service.findById(id);
 			System.out.println(s.getGender());
 			request.setAttribute("student", service.findById(id));
 			Map<String, String> form=StudentFormToBoMapping.mapBoToForm(s);
             forwardToView(form, request, response);
 
-		} catch (StudentServiceException e) {
+		} catch (ServiceException e) {
 			e.printStackTrace();
 			response.sendRedirect("/listStudents");
 
