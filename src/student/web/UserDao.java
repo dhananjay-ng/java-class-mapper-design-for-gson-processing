@@ -8,16 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import student.data.DbUtil;
-import student.data.Student;
-import student.data.StudentDaoException;
-import student.data.StudentNotFoundException;
 
 public class UserDao {
 	
 	Connection conn = null;
 	PreparedStatement pstmt = null;
 
-	public void add(User user) throws DaoException {
+	public void add(User user) throws UserDaoException {
 		try {
 			conn = DbUtil.getConnection();
 		} catch (SQLException e2) {
@@ -38,7 +35,7 @@ public class UserDao {
 				if (count > 0) {
 					conn.close();
 
-					throw new DaoException("Duplicate id " + user.getUserId());
+					throw new UserDaoException("Duplicate id " + user.getUserId());
 
 				}
 			}
@@ -67,7 +64,7 @@ public class UserDao {
 
 	}
 
-	public  User get(String userId) throws DaoException {
+	public  User get(String userId) throws UserDaoException {
 		User user = new User();
 		try {
 			conn = DbUtil.getConnection();
@@ -167,6 +164,114 @@ public class UserDao {
 		}
 		return userList;
 	}
+	
+	public void remove(User user) throws UserDaoException {
+		try {
+			conn = DbUtil.getConnection();
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			final String queryCheck = "select "//
+					+ "count(*) from \"user\""//
+					+ " where id = ?";
+			PreparedStatement ps = conn.prepareStatement(queryCheck);
+
+			ps.setString(1, user.getUserId());
+
+			ResultSet resultSet;
+
+			resultSet = ps.executeQuery();
+			if (resultSet.next()) {
+				final int count = resultSet.getInt(1);
+				if (count == 0) {
+					conn.close();
+
+					throw new UserNotFoundException("Unknown id " + user.getUserId());
+
+				}
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		/*if (!map.containsKey(student.getId())) {
+			throw new StudentNotFoundException("Student Does Not Exists");
+		}
+		map.remove(student.getId());
+		*/
+		try {
+			final String sql = "delete from  \"user\" "//
+					+ " where id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, user.getUserId());
+			
+			pstmt.executeUpdate();
+			pstmt.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void update(User user) throws UserDaoException {
+		try {
+			conn = DbUtil.getConnection();
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			final String queryCheck = "select "//
+					+ "count(*) from \"user\""//
+					+ " where id = ?";
+			PreparedStatement ps = conn.prepareStatement(queryCheck);
+
+			ps.setString(1, user.getUserId());
+
+			ResultSet resultSet;
+
+			resultSet = ps.executeQuery();
+			if (resultSet.next()) {
+				final int count = resultSet.getInt(1);
+				if (count == 0) {
+					conn.close();
+
+					throw new UserNotFoundException("Unknown id " + user.getUserId());
+
+				}
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		/*
+		 * if (data.containsKey(student.getId()) == false) { throw new
+		 * NotFoundException("Unknown id " + student.getId()); }
+		 * data.put(student.getId(), cloneStudent(student));
+		 */
+		try {
+			final String sql = "update  \"user\" "//
+					+ "set name=? where id=?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(2, user.getUserId());
+			pstmt.setString(1, user.getUserName());
+			pstmt = conn.prepareStatement(sql);
+			
+			
+			pstmt.executeUpdate();
+			pstmt.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+
 
 
 }

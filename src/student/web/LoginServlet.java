@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import student.data.ServiceException;
+
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 	List<String> messages = new ArrayList<>();
@@ -60,7 +62,7 @@ public class LoginServlet extends HttpServlet {
 
 			}
 
-		} catch (UserServiceException e) {
+		} catch (ServiceException e) {
 
 			messages.add("invalid userid/password.");
 			if (messages.size() > 0) {

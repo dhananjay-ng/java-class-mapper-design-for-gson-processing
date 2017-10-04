@@ -8,38 +8,41 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import student.data.Student;
-import student.data.StudentDaoException;
-import student.data.StudentServiceException;
+import student.data.Service;
+import student.data.ServiceException;
 
-public class UserService {
+public class UserService implements Service {
 
 	private UserDao userDao = new UserDao();
 
-	public void add(User user) throws UserServiceException {
-		try {
+
+	@Override
+	public void add(Object obj) throws ServiceException {
+			try {
+				User user=(User) obj;
 			userDao.add(user);
-		} catch (DaoException e) {
-			throw new UserServiceException(e.getMessage(), e);
+		} catch (UserDaoException e) {
+			throw new ServiceException(e.getMessage(), e);
 		}
 	}
 	
-
-	public User findById(String userId) throws UserServiceException {
+    @Override
+	public User findById(String userId) throws ServiceException {
 
 		try {
 			User user= userDao.get(userId);
 			user.setPassword("*");
 			return user;
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			e.printStackTrace();
-			throw new UserServiceException(e.getMessage(), e);
+			throw new ServiceException(e.getMessage(), e);
 
 		}
 
 	}
 	
-	public List<User> list() throws UserServiceException {
+    @Override
+	public List<User> list() throws ServiceException {
 		try {
 			List<User> users = userDao.list();
 			Collections.sort(users, new Comparator<User>() {
@@ -51,7 +54,7 @@ public class UserService {
 
 		} catch (UserDaoException e) {
 			e.printStackTrace();
-			throw new UserServiceException(e.getMessage(), e);
+			throw new ServiceException(e.getMessage(), e);
 
 		}
 	}
@@ -84,10 +87,34 @@ public class UserService {
 			}
 
 		} catch (UserNotFoundException e) {
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new UserServiceException("Error in authenticate(id, password)", e);
 		}
 		return false;
+	}
+
+
+
+
+	@Override
+	public void update(Object obj) throws ServiceException {
+		User user=(User) obj;
+		try {
+			userDao.update(user);
+		} catch (UserDaoException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}		
+	}
+
+
+	@Override
+	public void remove(Object obj) throws ServiceException {
+		User user=(User) obj;
+		try {
+			userDao.remove(user);
+		} catch (UserDaoException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}			
 	}
 
 }

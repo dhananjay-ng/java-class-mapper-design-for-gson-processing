@@ -1,7 +1,6 @@
 package student.rest;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -52,7 +51,6 @@ public class StudentRestService extends HttpServlet {
 		String[] pathParts = pathInfo.split("/");
 		try {
 			type = pathParts[1];
-			FileReader reader;
 			InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
 			if (is != null) {
 				Properties p = new Properties();
@@ -89,7 +87,7 @@ public class StudentRestService extends HttpServlet {
 			if (id == null || id.isEmpty()) {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-						operation(id, type, "list", request, response);
+						operation(id, type, MethodeNameConstants.LIST, request, response);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -97,7 +95,7 @@ public class StudentRestService extends HttpServlet {
 			} else {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-						operation(id, type, "findById", request, response);
+						operation(id, type, MethodeNameConstants.FIND_BY_ID, request, response);
 					} catch (Exception e) {
 						response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
 					}
@@ -116,15 +114,15 @@ public class StudentRestService extends HttpServlet {
 				Service service = (Service) c.newInstance();
 				
 				try{
-				if ("findById".equals(methode)) {
+				if (MethodeNameConstants.FIND_BY_ID.equals(methode)) {
 					List<Object> lt = new ArrayList<>();
 					lt.add(service.findById(id));
 					out.print(new Gson().toJson(lt));
 
-				} else if ("list".equals(methode)) {
+				} else if (MethodeNameConstants.LIST.equals(methode)) {
 					out.print(new Gson().toJson(service.list()));
 
-				} else if ("add".equals(methode)) {
+				} else if (MethodeNameConstants.ADD.equals(methode)) {
 
 					if (Class.forName(type).equals(StudentService.class)) {
 						service.add(new Gson().fromJson(request.getReader(), Student.class));			

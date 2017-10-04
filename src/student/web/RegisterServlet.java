@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import student.data.ServiceException;
+
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -47,7 +49,7 @@ public class RegisterServlet extends HttpServlet {
 			service.add(user);
 			response.sendRedirect("/login");
 
-		} catch (UserServiceException e) {
+		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			messages.add(e.getMessage());
 		}
