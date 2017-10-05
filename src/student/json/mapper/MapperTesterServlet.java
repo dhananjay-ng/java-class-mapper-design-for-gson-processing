@@ -74,7 +74,7 @@ public class MapperTesterServlet extends HttpServlet {
 		Type type = new TypeToken<Map<String, String>>() {}.getType();
 		Map<String, String> data = new Gson().fromJson(jsonText, type);
         System.out.println(data);
-	    Mapper mapper = new Mapper(getMappings(),"yyyy-MM-dd",jsonText , request, data,student, errorsMessages);
+	    Mapper mapper = new Mapper(getMappings(),"yyyy-MM-dd",jsonText , request, data,student, errorsMessages,Student.class);
 	    return mapper;
 
 	

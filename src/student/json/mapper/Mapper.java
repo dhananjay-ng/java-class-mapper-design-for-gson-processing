@@ -22,11 +22,14 @@ public class Mapper {
 	private final String jsonText;
 	private final HttpServletRequest request;
 	private final Map<String, Object> map;
-	private final Student businessObject;
+	private final Object businessObject;
 	private ErrorMessages errorsMessages;
+    Class<?> resource;
+
 
 	public Mapper(Mappings mappings, String dateFormat, String jsonText, HttpServletRequest request, Map<String, ?> map,
-			Student businessObject, ErrorMessages errorsMessages) {
+			Student businessObject, ErrorMessages errorsMessages, Class<?> resource
+) {
 		this.mappings = mappings;
 		this.dateFormat = dateFormat;
 		this.jsonText = jsonText;
@@ -36,6 +39,7 @@ public class Mapper {
 		this.map = tMap;
 		this.businessObject = businessObject;
 		this.errorsMessages=errorsMessages;
+		this.resource=resource;
 	}
 
 	public Boolean toBoolean(Mapping<Boolean> mapping, String text) {
@@ -161,7 +165,7 @@ public class Mapper {
 		}
 	}
 
-	public void mapToForm() {
+	public void mapToJson() {
 		for (Mapping<?> mapping : mappings.values()) {
 			if (mapping.direction == MappingDirection.TO_BO_ONLY) {
 				continue;

@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -18,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import student.data.Service;
 import student.data.ServiceException;
@@ -28,185 +28,200 @@ import student.web.UserService;
 
 @WebServlet("/rest/*")
 public class StudentRestService extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public StudentRestService() {
-        super();
-    }
+	public StudentRestService() {
+		super();
+	}
 
-    public String getPathParameterId(HttpServletRequest request) {
-        String pathInfo = request.getPathInfo();
-        String[] pathParts = pathInfo.split("/");
-        String id;
-        try {
-            id = pathParts[2];
-        } catch (IndexOutOfBoundsException e) {
-            return "";
-        }
-        return id;
-    }
+	public String getPathParameterId(HttpServletRequest request) {
+		String pathInfo = request.getPathInfo();
+		String[] pathParts = pathInfo.split("/");
+		String id;
+		try {
+			id = pathParts[2];
+		} catch (IndexOutOfBoundsException e) {
+			return "";
+		}
+		return id;
+	}
 
-    public String getPathParameterClass(HttpServletRequest request) {
-        String type;
-        String pathInfo = request.getPathInfo();
-        String[] pathParts = pathInfo.split("/");
-        try {
-            type = pathParts[1];
-            InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
-            if (is != null) {
-                Properties p = new Properties();
-                p.load(is);
-                return p.getProperty(type);
-            }
+	public String getPathParameterClass(HttpServletRequest request) {
+		String type;
+		String pathInfo = request.getPathInfo();
+		String[] pathParts = pathInfo.split("/");
+		try {
+			type = pathParts[1];
+			InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
+			if (is != null) {
+				Properties p = new Properties();
+				p.load(is);
+				return p.getProperty(type);
+			}
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return "";
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return "";
 
-        } catch (IndexOutOfBoundsException e) {
-            return "";
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return "";
+		} catch (IndexOutOfBoundsException e) {
+			return "";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 
-    }
+	}
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        /*String id = getPathParameterId(request);
-        String type = getPathParameterClass(request);
-      */  
-        EndPoint endPoint=new URLHandler().getEndPoint(request);
-        if (endPoint.service==null) {
-            try (PrintWriter out = response.getWriter()) {
-                out.println("Enter Proper Path");
-            }
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		response.setContentType("application/json;charset=UTF-8");
+		/*
+		 * String id = getPathParameterId(request); String type =
+		 * getPathParameterClass(request);
+		 */
+		EndPoint endPoint = new URLHandler().getEndPoint(request);
+		if (endPoint.service == null) {
+			try (PrintWriter out = response.getWriter()) {
+				out.println("Enter Proper Path");
+			}
 
-        } else {
-            if (endPoint.id == null || endPoint.id.isEmpty()) {
-                try (PrintWriter out = response.getWriter()) {
-                    try {
-                        //operation(id, type, MethodeNameConstants.LIST, request, response);
-                    	out.println(new Gson().toJson(endPoint.service.list(endPoint.query)));
-                    	
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                try (PrintWriter out = response.getWriter()) {
-                    try {
-                    	endPoint.service.findById(endPoint.id);
-                    } catch (Exception e) {
-                        response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
-                    }
-                }
-            }
+		} else {
+			if (endPoint.id == null || endPoint.id.isEmpty()) {
+				try (PrintWriter out = response.getWriter()) {
+					try {
+						// operation(id, type, MethodeNameConstants.LIST,
+						// request, response);
+						out.println(new Gson().toJson(endPoint.service.list(endPoint.query)));
 
-        }
-    }
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				try (PrintWriter out = response.getWriter()) {
+					try {
+						out.println(new Gson().toJson(endPoint.service.findById(endPoint.id)));
 
-    public void operation(String id, String type, String methode, HttpServletRequest request, HttpServletResponse response) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-        try {
-            try (PrintWriter out = response.getWriter()) {
+					} catch (Exception e) {
+						response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
+					}
+				}
+			}
 
-                Constructor c = Class.forName(type).getConstructor();
-                Service service = (Service) c.newInstance();
+		}
+	}
 
-                try {
-                    if (MethodeNameConstants.FIND_BY_ID.equals(methode)) {
-                        List<Object> lt = new ArrayList<>();
-                        lt.add(service.findById(id));
-                        out.print(gson.toJson(lt));
+	public void operation(String id, String type, String methode, HttpServletRequest request,
+			HttpServletResponse response) {
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		try {
+			try (PrintWriter out = response.getWriter()) {
 
-                    } else if (MethodeNameConstants.LIST.equals(methode)) {
-                        out.print(gson.toJson(service.list(null)));
+				Constructor c = Class.forName(type).getConstructor();
+				Service service = (Service) c.newInstance();
 
-                    } else if (MethodeNameConstants.ADD.equals(methode)) {
+				try {
+					if (MethodeNameConstants.ADD.equals(methode)) {
 
-                        if (Class.forName(type).equals(StudentService.class)) {
-                            service.add(gson.fromJson(request.getReader(), Student.class));
-                            out.println("Student with id =" + id + " added.");
+						if (Class.forName(type).equals(StudentService.class)) {
+							service.add(gson.fromJson(request.getReader(), Student.class));
+							out.println("Student with id =" + id + " added.");
 
-                        } else if (Class.forName(type).equals(UserService.class)) {
-                            service.add(gson.fromJson(request.getReader(), User.class));
+						} else if (Class.forName(type).equals(UserService.class)) {
+							service.add(gson.fromJson(request.getReader(), User.class));
 
-                            out.println("User with id =" + id + " added.");
+							out.println("User with id =" + id + " added.");
 
-                        }
-                    }
-                } catch (ServiceException e) {
+						}
+					}
+				} catch (ServiceException e) {
 
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
 
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e1) {
-            e1.printStackTrace();
-        }
-    }
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	}
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String id = getPathParameterId(request);
-        String type = getPathParameterClass(request);
-        if (type.isEmpty()) {
-            try (PrintWriter out = response.getWriter()) {
-                out.println("Enter Proper Path");
-            }
-        } else {
-            operation(id, type, "add", request, response);
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		EndPoint endPoint = new URLHandler().getEndPoint(request);
 
-        }
-        /*
-         * Student student = new Gson().fromJson(request.getReader(), Student.class);
-         * StudentService studentService = new StudentService(); try {
-         * studentService.add(student); } catch (ServiceException e) {
-         * 
-         * response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST"); }
-         */
-    }
+		if (endPoint.service == null) {
+			try (PrintWriter out = response.getWriter()) {
+				out.println("Enter Proper Path");
+			}
+		} else {
+			try {
+				
+			
+				endPoint.service.add(new Gson().fromJson(request.getReader(),endPoint.getResource()));
+				
+				
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			} catch (JsonIOException e) {
+    			e.printStackTrace();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			//operation(id, type, "add", request, response);
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Student student = new Gson().fromJson(request.getReader(), Student.class);
-        Service studentService = new StudentService();
-        try {
-            studentService.update(student);
-        } catch (ServiceException e) {
+		}
+		/*
+		 * Student student = new Gson().fromJson(request.getReader(),
+		 * Student.class); StudentService studentService = new StudentService();
+		 * try { studentService.add(student); } catch (ServiceException e) {
+		 * 
+		 * response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+		 * "BAD REQUEST"); }
+		 */
+	}
 
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST");
-        }
+	@Override
+	protected void doPut(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Student student = new Gson().fromJson(request.getReader(), Student.class);
+		Service studentService = new StudentService();
+		try {
+			studentService.update(student);
+		} catch (ServiceException e) {
 
-    }
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST");
+		}
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String id = (String) request.getParameter("id");
-        Service service = new StudentService();
-        try {
-            service.remove(service.findById(id));
+	}
 
-        } catch (ServiceException e) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "NO STUDENT FOUND");
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String id = (String) request.getParameter("id");
+		Service service = new StudentService();
+		try {
+			service.remove(service.findById(id));
 
-        }
+		} catch (ServiceException e) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "NO STUDENT FOUND");
 
-    }
+		}
+
+	}
 
 }
