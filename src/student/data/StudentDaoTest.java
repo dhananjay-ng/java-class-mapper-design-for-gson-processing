@@ -59,7 +59,7 @@ public class StudentDaoTest {
 		}
 
 		try {
-			List<Student> studentList = studentDao.list();
+			List<Student> studentList = studentDao.list(null);
 			System.out.println(studentList.size());
 			for (Student s : studentList) {
 				System.out.println(s.getName());

@@ -64,9 +64,9 @@ public class StudentService implements Service {
 	}
 
 	@Override
-	public List<Student> list() throws ServiceException {
+	public List<Student> list(String filter) throws ServiceException {
 		try {
-			List<Student> students = studentDao.list();
+			List<Student> students = studentDao.list(filter);
 			Collections.sort(students, new Comparator<Student>() {
 				public int compare(Student student1, Student student2) {
 					return student1.getName().compareTo(student2.getName());

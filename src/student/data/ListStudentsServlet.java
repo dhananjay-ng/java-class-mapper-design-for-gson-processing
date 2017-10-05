@@ -21,7 +21,7 @@ public class ListStudentsServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			request.setAttribute("students", studentService.list());
+			request.setAttribute("students", studentService.list(null));
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

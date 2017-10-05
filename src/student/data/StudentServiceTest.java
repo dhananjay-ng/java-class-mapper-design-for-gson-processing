@@ -55,7 +55,7 @@ public class StudentServiceTest {
 
 		List<Student> studentList;
 		try {
-			studentList = (List<Student>) studentService.list();
+			studentList = (List<Student>) studentService.list(null);
 			message("call to list() should return soreted student list");
 			for (Student s : studentList) {
 				System.out.println(s.getName());

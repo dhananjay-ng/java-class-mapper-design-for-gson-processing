@@ -10,7 +10,7 @@ public interface Service {
 
 	public void remove(Object obj) throws ServiceException;
 
-	public List<?> list() throws ServiceException;
+	public List<?> list(String filter) throws ServiceException;
 
 	public Object findById(String id) throws ServiceException;
 

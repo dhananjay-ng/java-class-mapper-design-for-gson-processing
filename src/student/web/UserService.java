@@ -42,7 +42,7 @@ public class UserService implements Service {
 	}
 	
     @Override
-	public List<User> list() throws ServiceException {
+	public List<User> list(String filter) throws ServiceException {
 		try {
 			List<User> users = userDao.list();
 			Collections.sort(users, new Comparator<User>() {

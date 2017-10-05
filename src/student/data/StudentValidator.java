@@ -50,7 +50,7 @@ public class StudentValidator {
 	}
 	 private boolean isDuplicatePerson() {
 	        try {
-	            return service.list().stream()
+	            return service.list(null).stream()
 	                    .anyMatch(s -> s.getId().equals(student.getId()) == false //
 	                            && s.getName().equals(student.getName())//
 	                            && s.getGender().equals(student.getGender())//
@@ -62,7 +62,7 @@ public class StudentValidator {
 
 	    private boolean isDuplicateRollNumber() {
 	        try {
-	            return service.list().stream()//
+	            return service.list(null).stream()//
 	                    .anyMatch(s -> s.getId().equals(student.getId()) == false //
 	                            && s.getStandard() == student.getStandard() //
 	                            && s.getDivision().equals(student.getDivision())//

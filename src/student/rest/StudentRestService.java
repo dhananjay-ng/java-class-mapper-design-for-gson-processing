@@ -90,7 +90,8 @@ public class StudentRestService extends HttpServlet {
                 try (PrintWriter out = response.getWriter()) {
                     try {
                         //operation(id, type, MethodeNameConstants.LIST, request, response);
-                    	endPoint.service.list();
+                    	out.println(new Gson().toJson(endPoint.service.list(endPoint.query)));
+                    	
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -123,7 +124,7 @@ public class StudentRestService extends HttpServlet {
                         out.print(gson.toJson(lt));
 
                     } else if (MethodeNameConstants.LIST.equals(methode)) {
-                        out.print(gson.toJson(service.list()));
+                        out.print(gson.toJson(service.list(null)));
 
                     } else if (MethodeNameConstants.ADD.equals(methode)) {
 

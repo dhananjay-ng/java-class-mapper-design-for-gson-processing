@@ -256,10 +256,12 @@ public class StudentDao {
 		return student;
 	}
 
-	public List<Student> list() throws StudentDaoException {
+	public List<Student> list(String filter) throws StudentDaoException {
 		/*if (map.isEmpty()) {
 			throw new StudentNotFoundException("Students Does Not Exists");
 		}*/
+		
+		
 		Student student=new Student();
 		try {
 			conn = DbUtil.getConnection();
@@ -299,8 +301,16 @@ public class StudentDao {
 		return new ArrayList<Student>(map.values());
 		*/
 		try {
-			final String queryCheck = "select "//
+			String queryCheck;
+			if(filter==null){
+			 queryCheck = "select "//
 					+ "* from \"student\"";
+			}
+			else{
+				 queryCheck = "select "//
+							+ "* from \"student\""+filter;
+					
+			}
 			PreparedStatement ps = conn.prepareStatement(queryCheck);
 
 			ResultSet resultSet;
