@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Properties;
@@ -16,8 +14,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.jasper.tagplugins.jstl.core.Out;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,10 +27,7 @@ import student.data.Student;
 import student.data.StudentService;
 import student.json.mapper.ErrorMessages;
 import student.json.mapper.Mapper;
-import student.json.mapper.MapperTesterServlet;
 import student.json.mapper.MessageName;
-import student.web.User;
-import student.web.UserService;
 
 @WebServlet("/rest/*")
 public class StudentRestService extends HttpServlet {
