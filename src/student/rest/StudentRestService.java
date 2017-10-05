@@ -76,19 +76,21 @@ public class StudentRestService extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        String id = getPathParameterId(request);
+        /*String id = getPathParameterId(request);
         String type = getPathParameterClass(request);
-        new URLHandler().getEndPoint(request);
-        if (type.isEmpty()) {
+      */  
+        EndPoint endPoint=new URLHandler().getEndPoint(request);
+        if (endPoint.service==null) {
             try (PrintWriter out = response.getWriter()) {
                 out.println("Enter Proper Path");
             }
 
         } else {
-            if (id == null || id.isEmpty()) {
+            if (endPoint.id == null || endPoint.id.isEmpty()) {
                 try (PrintWriter out = response.getWriter()) {
                     try {
-                        operation(id, type, MethodeNameConstants.LIST, request, response);
+                        //operation(id, type, MethodeNameConstants.LIST, request, response);
+                    	endPoint.service.list();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -96,7 +98,7 @@ public class StudentRestService extends HttpServlet {
             } else {
                 try (PrintWriter out = response.getWriter()) {
                     try {
-                        operation(id, type, MethodeNameConstants.FIND_BY_ID, request, response);
+                    	endPoint.service.findById(endPoint.id);
                     } catch (Exception e) {
                         response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
                     }

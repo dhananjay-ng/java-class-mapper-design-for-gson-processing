@@ -37,7 +37,7 @@ public class URLHandler {
 
         String id = getPathParameterId(request);
         endPoint.setId(id);
-
+  
         String jsonqueryString = request.getQueryString().split("=")[1];
         String sqlqueryString = new QueryParser().parse(jsonqueryString);
         endPoint.setQuery(sqlqueryString);
