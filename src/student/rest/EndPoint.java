@@ -1,6 +1,7 @@
 package student.rest;
 
 import student.data.Service;
+import student.json.mapper.Mappings;
 
 public class EndPoint {
 
@@ -9,8 +10,17 @@ public class EndPoint {
 
     String query;
     String id;
+    Mappings mappings;
 
-    public Service getService() {
+    public Mappings getMappings() {
+		return mappings;
+	}
+
+	public void setMappings(Mappings mappings) {
+		this.mappings = mappings;
+	}
+
+	public Service getService() {
         return service;
     }
 
@@ -41,5 +51,7 @@ public class EndPoint {
     public void setResource(Class resource) {
         this.resource = resource;
     }
+    
+ 
 
 }

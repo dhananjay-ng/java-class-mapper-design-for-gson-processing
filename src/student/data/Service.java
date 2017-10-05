@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Service {
 
-	public void add(Object obj) throws ServiceException;
+	public String add(Object obj) throws ServiceException;
 
 	public void update(Object obj) throws ServiceException;
 

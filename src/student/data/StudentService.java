@@ -12,21 +12,24 @@ public class StudentService implements Service {
 	List<String> messages = new ArrayList<>();
 
 	@Override
-	public void add(Object obj) throws ServiceException {
-		String id = studentDao.returnLastId();
-		Integer id1 = Integer.parseInt(id);
+	public String add(Object obj) throws ServiceException {
+		int id = studentDao.returnLastId();
+		Integer id1 = id;
+		System.out.println(id1);
 		id1 += 1;
-		id = id1.toString();
+		String id3 = id1.toString();
+
 		Student student=(Student) obj;
-		student.setId(id);
+		student.setId(id3);
 		studentValidator = new StudentValidator(student, this);
 		studentValidator.validateStudent(messages, student);
+		System.out.println(messages);
 		if (messages.size() > 0) {
 			throw new ValidatorException("validateForAdd() errors", messages);
 
 		}
 		try {
-			studentDao.add(student);
+			return studentDao.add(student);
 		} catch (DaoException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}

@@ -17,10 +17,10 @@ public class UserService implements Service {
 
 
 	@Override
-	public void add(Object obj) throws ServiceException {
+	public String add(Object obj) throws ServiceException {
 			try {
 				User user=(User) obj;
-			userDao.add(user);
+			return userDao.add(user);
 		} catch (UserDaoException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}

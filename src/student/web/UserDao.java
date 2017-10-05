@@ -14,7 +14,7 @@ public class UserDao {
 	Connection conn = null;
 	PreparedStatement pstmt = null;
 
-	public void add(User user) throws UserDaoException {
+	public String add(User user) throws UserDaoException {
 		try {
 			conn = DbUtil.getConnection();
 		} catch (SQLException e2) {
@@ -57,7 +57,7 @@ public class UserDao {
 			pstmt.executeUpdate();
 			pstmt.close();
 			conn.close();
-
+            return user.getUserId();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

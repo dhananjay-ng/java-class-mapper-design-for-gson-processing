@@ -50,7 +50,7 @@ public class MapperTesterServlet extends HttpServlet {
 		
 	}
 	
-	private static Mappings getMappings() {
+	public static Mappings getMappings() {
 
 	    Mappings mappings = new Mappings();
 

@@ -28,7 +28,7 @@ public class Mapper {
 
 
 	public Mapper(Mappings mappings, String dateFormat, String jsonText, HttpServletRequest request, Map<String, ?> map,
-			Student businessObject, ErrorMessages errorsMessages, Class<?> resource
+			Object businessObject, ErrorMessages errorsMessages, Class<?> resource
 ) {
 		this.mappings = mappings;
 		this.dateFormat = dateFormat;
@@ -153,7 +153,7 @@ public class Mapper {
 			try {
 				// propertyUtils.setProperty(businessObject,
 				// mapping.boPropertyName, value);
-				Field f1 = Student.class.getDeclaredField(mapping.boPropertyName);
+				Field f1 = resource.getDeclaredField(mapping.boPropertyName);
 				f1.setAccessible(true);
 
 				f1.set(businessObject, value);

@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 import student.data.Service;
+import student.json.mapper.BoMappings;
 
 public class URLHandler {
 
@@ -48,6 +49,8 @@ public class URLHandler {
             String sqlqueryString = new QueryParser().parse(jsonqueryString);
             endPoint.setQuery(sqlqueryString);
         }
+        System.out.println(type+"   "+resourceClass);
+        endPoint.setMappings(BoMappings.getBoMappings(resourceClass));
         return endPoint;
 
     }

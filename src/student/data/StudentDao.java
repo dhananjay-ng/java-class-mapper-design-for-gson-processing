@@ -24,7 +24,7 @@ public class StudentDao {
 		StudentDao.map = map;
 	}
 
-	public void add(Student student) throws DaoException {
+	public String add(Student student) throws DaoException {
 		try {
 			conn = DbUtil.getConnection();
 		} catch (SQLException e2) {
@@ -43,8 +43,8 @@ public class StudentDao {
 			if (resultSet.next()) {
 				final int count = resultSet.getInt(1);
 				if (count > 0) {
+					System.out.println(count);
 					conn.close();
-
 					throw new UniqueKeyViolationException("Duplicate id " + student.getId());
 
 				}
@@ -70,10 +70,12 @@ public class StudentDao {
 			pstmt.setInt(6, student.getStandard());
 			pstmt.setString(7, student.getDivision());
 			pstmt.setInt(8, student.getRollNumber());
-
 			pstmt.executeUpdate();
+
 			pstmt.close();
 			conn.close();
+			return student.getId();
+
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -347,7 +349,7 @@ public class StudentDao {
 		return cloneStudent;
 	}
 
-	public String returnLastId() {
+	public int returnLastId() {
 		String id=null;
 		/*if (map.isEmpty()) {
 		throw new StudentNotFoundException("Students Does Not Exists");
@@ -369,7 +371,13 @@ public class StudentDao {
 			if (count == 0) {
 				conn.close();
 
-            return "0";
+            return 0;
+			}
+			else if(count>0){
+				System.out.println("Count"+count);
+				return count;
+				
+				
 			}
 			resultSet.close();
 			ps.close();
@@ -388,14 +396,14 @@ public class StudentDao {
 
 		resultSet = ps.executeQuery();
 		resultSet.next();
-		return resultSet.getString(1);
+		return 0;
 		
 	} catch (SQLException e1) {
 		e1.printStackTrace();
 	}
 
 		
-		return id;
+		return 0;
 		
 	}
 }
