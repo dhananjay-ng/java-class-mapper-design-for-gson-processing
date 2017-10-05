@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,12 +16,12 @@ public class URLHandler {
     public EndPoint getEndPoint(HttpServletRequest request) {
         EndPoint endPoint = new EndPoint();
         String type = getPathParameterClass(request);
-        
-        StringTokenizer st=new StringTokenizer(type,"|");
-        String serviceClass =st.nextToken();
-       
+
+        StringTokenizer st = new StringTokenizer(type, "|");
+        String serviceClass = st.nextToken();
+
         String resourceClass = st.nextToken();
-        
+
         if (type != null) {
             Service service = null;
             try {
@@ -42,11 +43,22 @@ public class URLHandler {
 
         String id = getPathParameterId(request);
         endPoint.setId(id);
-        
-        if (request.getQueryString() != null) {
-            String jsonqueryString = request.getQueryString().split("=")[1];
-            String sqlqueryString = new QueryParser().parse(jsonqueryString);
-            endPoint.setQuery(sqlqueryString);
+
+      
+        if (isQuery(request)) {
+
+            String jsonqueryString = null;
+            try {
+                jsonqueryString = request.getReader().lines().collect(Collectors.joining());
+            } catch (IOException e) {
+                jsonqueryString = null;
+                e.printStackTrace();
+            }
+            if (jsonqueryString != null) {
+                String sqlqueryString = new QueryParser().parse(jsonqueryString);
+                System.out.println(sqlqueryString);
+                endPoint.setQuery(sqlqueryString);
+            }
         }
         return endPoint;
 
@@ -66,10 +78,12 @@ public class URLHandler {
 
     public String getPathParameterClass(HttpServletRequest request) {
         String type;
+        String queryResource;
         String pathInfo = request.getPathInfo();
         String[] pathParts = pathInfo.split("/");
         try {
             type = pathParts[1];
+
             InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
             if (is != null) {
                 Properties p = new Properties();
@@ -91,4 +105,15 @@ public class URLHandler {
 
     }
 
+    private boolean isQuery(HttpServletRequest request)
+    {
+        boolean val=false;
+       StringTokenizer st=new StringTokenizer(request.getPathInfo(),"/");
+       st.nextToken();
+       if(st.hasMoreTokens()&& st.nextToken().equals("query"))
+           val=true;
+       return val;
+        
+        
+    }
 }
