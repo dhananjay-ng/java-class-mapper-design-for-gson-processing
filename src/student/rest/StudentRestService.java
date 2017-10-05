@@ -28,187 +28,182 @@ import student.web.UserService;
 
 @WebServlet("/rest/*")
 public class StudentRestService extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public StudentRestService() {
-		super();
-	}
+    public StudentRestService() {
+        super();
+    }
 
-	public String getPathParameterId(HttpServletRequest request) {
-		String pathInfo = request.getPathInfo();
-		String[] pathParts = pathInfo.split("/");
-		String id;
-		try {
-			id = pathParts[2];
-		} catch (IndexOutOfBoundsException e) {
-			return "";
-		}
-		return id;
-	}
+    public String getPathParameterId(HttpServletRequest request) {
+        String pathInfo = request.getPathInfo();
+        String[] pathParts = pathInfo.split("/");
+        String id;
+        try {
+            id = pathParts[2];
+        } catch (IndexOutOfBoundsException e) {
+            return "";
+        }
+        return id;
+    }
 
-	public String getPathParameterClass(HttpServletRequest request) {
-		String type;
-		String pathInfo = request.getPathInfo();
-		String[] pathParts = pathInfo.split("/");
-		try {
-			type = pathParts[1];
-			InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
-			if (is != null) {
-				Properties p = new Properties();
-				p.load(is);
-				return p.getProperty(type);
-			}
+    public String getPathParameterClass(HttpServletRequest request) {
+        String type;
+        String pathInfo = request.getPathInfo();
+        String[] pathParts = pathInfo.split("/");
+        try {
+            type = pathParts[1];
+            InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
+            if (is != null) {
+                Properties p = new Properties();
+                p.load(is);
+                return p.getProperty(type);
+            }
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return "";
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "";
 
-		} catch (IndexOutOfBoundsException e) {
-			return "";
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
+        } catch (IndexOutOfBoundsException e) {
+            return "";
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "";
 
-	}
+    }
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		response.setContentType("application/json;charset=UTF-8");
-		String id = getPathParameterId(request);
-		String type = getPathParameterClass(request);
-		if (type.isEmpty()) {
-			try (PrintWriter out = response.getWriter()) {
-				out.println("Enter Proper Path");
-			}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        String id = getPathParameterId(request);
+        String type = getPathParameterClass(request);
+        new URLHandler().getEndPoint(request);
+        if (type.isEmpty()) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Enter Proper Path");
+            }
 
-		} else {
-			if (id == null || id.isEmpty()) {
-				try (PrintWriter out = response.getWriter()) {
-					try {
-						operation(id, type, MethodeNameConstants.LIST, request, response);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				try (PrintWriter out = response.getWriter()) {
-					try {
-						operation(id, type, MethodeNameConstants.FIND_BY_ID, request, response);
-					} catch (Exception e) {
-						response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
-					}
-				}
-			}
+        } else {
+            if (id == null || id.isEmpty()) {
+                try (PrintWriter out = response.getWriter()) {
+                    try {
+                        operation(id, type, MethodeNameConstants.LIST, request, response);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                try (PrintWriter out = response.getWriter()) {
+                    try {
+                        operation(id, type, MethodeNameConstants.FIND_BY_ID, request, response);
+                    } catch (Exception e) {
+                        response.sendError(HttpServletResponse.SC_NO_CONTENT, "NOT DATA FOUND");
+                    }
+                }
+            }
 
-		}
-	}
+        }
+    }
 
-	public void operation(String id, String type, String methode, HttpServletRequest request,
-			HttpServletResponse response ) {
-		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		try {
-			try (PrintWriter out = response.getWriter()) {
+    public void operation(String id, String type, String methode, HttpServletRequest request, HttpServletResponse response) {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        try {
+            try (PrintWriter out = response.getWriter()) {
 
-				Constructor c = Class.forName(type).getConstructor();
-				Service service = (Service) c.newInstance();
-				
-				try{
-				if (MethodeNameConstants.FIND_BY_ID.equals(methode)) {
-					List<Object> lt = new ArrayList<>();
-					lt.add(service.findById(id));
-					out.print(gson.toJson(lt));
+                Constructor c = Class.forName(type).getConstructor();
+                Service service = (Service) c.newInstance();
 
-				} else if (MethodeNameConstants.LIST.equals(methode)) {
-					out.print(gson.toJson(service.list()));
+                try {
+                    if (MethodeNameConstants.FIND_BY_ID.equals(methode)) {
+                        List<Object> lt = new ArrayList<>();
+                        lt.add(service.findById(id));
+                        out.print(gson.toJson(lt));
 
-				} else if (MethodeNameConstants.ADD.equals(methode)) {
+                    } else if (MethodeNameConstants.LIST.equals(methode)) {
+                        out.print(gson.toJson(service.list()));
 
-					if (Class.forName(type).equals(StudentService.class)) {
-						service.add(gson.fromJson(request.getReader(), Student.class));			
-						out.println("Student with id =" + id + " added.");
+                    } else if (MethodeNameConstants.ADD.equals(methode)) {
 
-					} else if (Class.forName(type).equals(UserService.class)) {
-						service.add(gson.fromJson(request.getReader(), User.class));
-								
-						out.println("User with id =" + id + " added.");
+                        if (Class.forName(type).equals(StudentService.class)) {
+                            service.add(gson.fromJson(request.getReader(), Student.class));
+                            out.println("Student with id =" + id + " added.");
 
-					}
-				}
-			} catch(ServiceException e){
-				
-			}
-				}catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (InstantiationException e) {
-			e.printStackTrace();
+                        } else if (Class.forName(type).equals(UserService.class)) {
+                            service.add(gson.fromJson(request.getReader(), User.class));
 
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		}
-	}
+                            out.println("User with id =" + id + " added.");
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String id = getPathParameterId(request);
-		String type = getPathParameterClass(request);
-		if (type.isEmpty()) {
-			try (PrintWriter out = response.getWriter()) {
-				out.println("Enter Proper Path");
-			}
-		} else {
-			operation(id, type, "add", request, response);
+                        }
+                    }
+                } catch (ServiceException e) {
 
-		}
-		/*
-		 * Student student = new Gson().fromJson(request.getReader(),
-		 * Student.class); StudentService studentService = new StudentService();
-		 * try { studentService.add(student); } catch (ServiceException e) {
-		 * 
-		 * response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-		 * "BAD REQUEST"); }
-		 */
-	}
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (InstantiationException e) {
+            e.printStackTrace();
 
-	@Override
-	protected void doPut(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		Student student = new Gson().fromJson(request.getReader(), Student.class);
-		Service studentService = new StudentService();
-		try {
-			studentService.update(student);
-		} catch (ServiceException e) {
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        }
+    }
 
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST");
-		}
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id = getPathParameterId(request);
+        String type = getPathParameterClass(request);
+        if (type.isEmpty()) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Enter Proper Path");
+            }
+        } else {
+            operation(id, type, "add", request, response);
 
-	}
+        }
+        /*
+         * Student student = new Gson().fromJson(request.getReader(), Student.class);
+         * StudentService studentService = new StudentService(); try {
+         * studentService.add(student); } catch (ServiceException e) {
+         * 
+         * response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST"); }
+         */
+    }
 
-	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String id = (String) request.getParameter("id");
-		Service service = new StudentService();
-		try {
-			service.remove(service.findById(id));
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Student student = new Gson().fromJson(request.getReader(), Student.class);
+        Service studentService = new StudentService();
+        try {
+            studentService.update(student);
+        } catch (ServiceException e) {
 
-		} catch (ServiceException e) {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND, "NO STUDENT FOUND");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "BAD REQUEST");
+        }
 
-		}
+    }
 
-	}
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id = (String) request.getParameter("id");
+        Service service = new StudentService();
+        try {
+            service.remove(service.findById(id));
+
+        } catch (ServiceException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "NO STUDENT FOUND");
+
+        }
+
+    }
 
 }
