@@ -79,6 +79,7 @@ public class StudentRestService extends HttpServlet {
 		response.setContentType("application/json;charset=UTF-8");
 		String id = getPathParameterId(request);
 		String type = getPathParameterClass(request);
+		new URLHandler().getEndPoint(request);
 		if (type.isEmpty()) {
 			try (PrintWriter out = response.getWriter()) {
 				out.println("Enter Proper Path");

@@ -16,8 +16,8 @@ public class DbUtil {
 
 		startDerby();
 		try (Connection con = DbUtil.getConnection()) {
-			//createUserTable(con);
-			//createStudentTable(con);
+		//	createUserTable(con);
+		//	createStudentTable(con);
 
 
 		} catch (SQLException e) {
