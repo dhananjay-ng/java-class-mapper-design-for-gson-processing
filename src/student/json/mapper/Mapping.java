@@ -43,16 +43,4 @@ public class Mapping<T> {
         this.trim = trim;
     }
 
-   /* public Mapping<T> setInvalid(String section, String key, String... args) {
-        return add(MessageName.INVALID, new MappingMessage(section, key, args));
-    }
-
-    public Mapping<T> setRequired(String section, String key, String... args) {
-        return add(MessageName.REQUIRED, new MappingMessage(section, key, args));
-    }
-
-    public Mapping<T> add(MessageName validation, MappingMessage message) {
-        messages.put(validation.name(), message);
-        return this;
-    }*/
-}
+  }

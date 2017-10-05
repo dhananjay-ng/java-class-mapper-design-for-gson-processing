@@ -1,16 +1,24 @@
 package student.json.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ErrorMessages {
 	
-	public static List<String> errors;
-	
-	void add(String msg) {
-		errors.add(msg);
-	}
-	List<String> list(){
+	public List<String> getErrors() {
 		return errors;
 	}
+	public void setErrors(List<String> errors) {
+		this.errors = errors;
+	}
+	public ErrorMessages(){
+		errors=new ArrayList<>();
+	}
+	private  List<String> errors;
+	
+	void addErrors(String msg) {
+		errors.add(msg);
+	}
+	
 
 }

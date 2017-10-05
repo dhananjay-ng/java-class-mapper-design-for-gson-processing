@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import student.data.Service;
 import student.data.ServiceException;
@@ -107,6 +108,7 @@ public class StudentRestService extends HttpServlet {
 
 	public void operation(String id, String type, String methode, HttpServletRequest request,
 			HttpServletResponse response ) {
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		try {
 			try (PrintWriter out = response.getWriter()) {
 
@@ -117,19 +119,19 @@ public class StudentRestService extends HttpServlet {
 				if (MethodeNameConstants.FIND_BY_ID.equals(methode)) {
 					List<Object> lt = new ArrayList<>();
 					lt.add(service.findById(id));
-					out.print(new Gson().toJson(lt));
+					out.print(gson.toJson(lt));
 
 				} else if (MethodeNameConstants.LIST.equals(methode)) {
-					out.print(new Gson().toJson(service.list()));
+					out.print(gson.toJson(service.list()));
 
 				} else if (MethodeNameConstants.ADD.equals(methode)) {
 
 					if (Class.forName(type).equals(StudentService.class)) {
-						service.add(new Gson().fromJson(request.getReader(), Student.class));			
+						service.add(gson.fromJson(request.getReader(), Student.class));			
 						out.println("Student with id =" + id + " added.");
 
 					} else if (Class.forName(type).equals(UserService.class)) {
-						service.add(new Gson().fromJson(request.getReader(), User.class));
+						service.add(gson.fromJson(request.getReader(), User.class));
 								
 						out.println("User with id =" + id + " added.");
 
