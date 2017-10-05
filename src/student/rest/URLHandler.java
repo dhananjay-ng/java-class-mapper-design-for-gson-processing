@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,8 +15,12 @@ public class URLHandler {
     public EndPoint getEndPoint(HttpServletRequest request) {
         EndPoint endPoint = new EndPoint();
         String type = getPathParameterClass(request);
-        String serviceClass = type.split("|")[0];
-        String resourceClass = type.split("|")[1];
+        
+        StringTokenizer st=new StringTokenizer(type,"|");
+        String serviceClass =st.nextToken();
+       
+        String resourceClass = st.nextToken();
+        
         if (type != null) {
             Service service = null;
             try {
@@ -26,7 +31,7 @@ public class URLHandler {
             }
             endPoint.setService(service);
         }
-        
+
         try {
             Class resource = Class.forName(resourceClass);
             endPoint.setResource(resource);
@@ -37,11 +42,12 @@ public class URLHandler {
 
         String id = getPathParameterId(request);
         endPoint.setId(id);
-  
-        String jsonqueryString = request.getQueryString().split("=")[1];
-        String sqlqueryString = new QueryParser().parse(jsonqueryString);
-        endPoint.setQuery(sqlqueryString);
-       
+        
+        if (request.getQueryString() != null) {
+            String jsonqueryString = request.getQueryString().split("=")[1];
+            String sqlqueryString = new QueryParser().parse(jsonqueryString);
+            endPoint.setQuery(sqlqueryString);
+        }
         return endPoint;
 
     }
