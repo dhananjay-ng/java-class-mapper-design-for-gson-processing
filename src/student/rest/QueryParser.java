@@ -17,7 +17,7 @@ public class QueryParser {
             System.out.println(e.getValue());
             System.out.println(e.getValue().getClass());
         }
-        return query(queryMap);
+        return "where "+query(queryMap);
 
     }
 
