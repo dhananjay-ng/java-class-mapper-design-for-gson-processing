@@ -32,7 +32,7 @@ public class QueryParser {
         String op = e.getKey();
         String predicate = null;
         if (op.equals("$ne")) {
-            predicate = "!=" + e.getValue();
+            predicate = "!='" + e.getValue()+"'";
         } else if (op.equals("$or")) {
             if (e.getValue() instanceof ArrayList) {
                 List<LinkedTreeMap<String, Object>> orConditions = (ArrayList) e.getValue();
@@ -51,7 +51,7 @@ public class QueryParser {
         } else {
             predicate = e.getKey();
             if (e.getValue() instanceof String) {
-                predicate = predicate + "=" + e.getValue();
+                predicate = predicate + "='" + e.getValue()+"'";
             } else if (e.getValue() instanceof LinkedTreeMap) {
                 String query = query((Map) e.getValue());
                 predicate = predicate + query.substring(1, query.length() - 1);

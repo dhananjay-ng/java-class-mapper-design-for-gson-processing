@@ -171,9 +171,14 @@ public class StudentRestService extends HttpServlet {
 		} else {
 			try {
 				
-			
+			    if(endPoint.query!=null)
+			    {
+			        response.getWriter().println(new Gson().toJson(endPoint.service.list(endPoint.query)));
+			    }
+			    else
+			    {
 				endPoint.service.add(new Gson().fromJson(request.getReader(),endPoint.getResource()));
-				
+			    }
 				
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
