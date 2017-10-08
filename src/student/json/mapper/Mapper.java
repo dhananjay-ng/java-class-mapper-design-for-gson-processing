@@ -116,7 +116,8 @@ public class Mapper {
 		  if (source == MappingSource.JSON) { 
 			  JsonElement jc=jsonObject.get(formPropertyName);
 			  if(jc.isJsonPrimitive()) {
-				  return jc.toString();
+				  return jc.getAsString();
+				  
 			  }
 			  else if(jc.isJsonObject()) {
 				  try {
