@@ -13,7 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import student.data.Student;
+import test.Book;
+import test.Author;
 
 public class Mapper {
 	private final Mappings mappings;
@@ -25,6 +31,7 @@ public class Mapper {
 	private final Object businessObject;
 	private ErrorMessages errorsMessages;
     Class<?> resource;
+    JsonObject jsonObject;
 
 
 	public Mapper(Mappings mappings, String dateFormat, String jsonText, HttpServletRequest request, Map<String, ?> map,
@@ -104,11 +111,36 @@ public class Mapper {
 		}
 	}
 
-	protected String getJsonPropertyValue(String formPropertyName, MappingSource source) {
-		/*
-		 * if (source == MappingSource.JSON) { return
-		 * toString(jsonText.get(formPropertyName)); } else
-		 */ if (source == MappingSource.MAP) {
+	protected String getJsonPropertyValue(String formPropertyName, MappingSource source,Class<?> type) {
+		
+		  if (source == MappingSource.JSON) { 
+			  JsonElement jc=jsonObject.get(formPropertyName);
+			  if(jc.isJsonPrimitive()) {
+				  return jc.toString();
+			  }
+			  else if(jc.isJsonObject()) {
+				  try {
+					Object ob=type.newInstance();
+					  ErrorMessages errorsMessages=new ErrorMessages();
+					    MappingHandler mp=new  MappingHandler();
+					    mp.mapFormToBo(type.getName(),request,jc.toString(),ob,
+								 errorsMessages,type);
+					    return ob.toString();
+
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				  
+				  
+			  } 
+			  
+			  
+		  }
+		  else if (source == MappingSource.MAP) {
 			return toString(map.get(formPropertyName));
 		}
 		return request.getParameter(formPropertyName);
@@ -138,22 +170,42 @@ public class Mapper {
 	PropertyUtils propertyUtils = new PropertyUtils();
 
 	public void mapToBo() {
+		JsonParser parser = new JsonParser();
+		JsonElement jsonTree = parser.parse(jsonText);
+		if(jsonTree.isJsonObject()){
+		 jsonObject = jsonTree.getAsJsonObject();
 		for (Mapping<?> mapping : mappings.values()) {
 			if (mapping.direction == MappingDirection.TO_JSON_ONLY) {
 				continue;
 			}
+				  JsonElement jc=jsonObject.get(mapping.jsonPropertyName);
+				  Object value = null;
+				  if(jc.isJsonPrimitive()) {
+						String textValue = getJsonPropertyValue(mapping.jsonPropertyName, mapping.source,mapping.type);
+						System.out.println(textValue);
+						if (mapping.skipBlanks && textValue.isEmpty()) {
+							continue;
+						}
 
-			String textValue = getJsonPropertyValue(mapping.jsonPropertyName, mapping.source);
+						 value = parseValue(mapping, textValue);
+					
+				  }
+				  else if(jc.isJsonObject()) {
+					  try {
+						 value=mapping.type.newInstance();
+						  ErrorMessages errorsMessages=new ErrorMessages();
+						    MappingHandler mp=new  MappingHandler();
+						    mp.mapFormToBo(mapping.type.getName(),request,jc.toString(),value,
+									 errorsMessages,mapping.type);
 
-			if (mapping.skipBlanks && textValue.isEmpty()) {
-				continue;
-			}
-
-			Object value = parseValue(mapping, textValue);
-			try {
-				// propertyUtils.setProperty(businessObject,
-				// mapping.boPropertyName, value);
-				Field f1 = resource.getDeclaredField(mapping.boPropertyName);
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				  }
+				try {
+					Field f1 = resource.getDeclaredField(mapping.boPropertyName);
 				f1.setAccessible(true);
 
 				f1.set(businessObject, value);
@@ -162,6 +214,8 @@ public class Mapper {
 			} catch (Throwable e) {
 				throw new RuntimeException(e);
 			}
+		}
+		
 		}
 	}
 

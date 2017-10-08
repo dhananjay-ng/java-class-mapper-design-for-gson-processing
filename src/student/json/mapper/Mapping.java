@@ -4,7 +4,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Mapping<T> {
-    final MappingSource source;
+    public boolean isSkipBlanks() {
+		return skipBlanks;
+	}
+
+	public void setSkipBlanks(boolean skipBlanks) {
+		this.skipBlanks = skipBlanks;
+	}
+
+	public MappingSource getSource() {
+		return source;
+	}
+
+	public String getJsonPropertyName() {
+		return jsonPropertyName;
+	}
+
+	public String getBoPropertyName() {
+		return boPropertyName;
+	}
+
+	public Class<T> getType() {
+		return type;
+	}
+
+	public boolean isTrim() {
+		return trim;
+	}
+
+	public int getScale() {
+		return scale;
+	}
+
+	public MappingDirection getDirection() {
+		return direction;
+	}
+
+	public Map<String, MappingMessage> getMessages() {
+		return messages;
+	}
+
+	final MappingSource source;
     final String jsonPropertyName;
     final String boPropertyName;
     final Class<T> type;

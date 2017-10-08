@@ -1,15 +1,14 @@
 package student.json.mapper;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import test.Author;
+import test.Book;
 
 public class Test {
 
 	public static void main(String[] args) {
 	//String s="{\"students\":[\"student.data.StudentService\",\"student.data.Student\"] }";
 	//Employee employee = gson.fromJson(br, Employee.class);
-		
+		/*
 		String jsonString = "{\"aNumber\":2}";
 
 		try {
@@ -22,7 +21,10 @@ public class Test {
 			// TODO Auto-generated catch block
 			
 			e.printStackTrace();
-		}
+		}*/
+		Book bk=new Book();
+		System.out.println(Author.class.getName());
+				
 	
 	}
 

@@ -53,7 +53,7 @@ public class StudentRestService extends HttpServlet {
 		String type;
 		String pathInfo = request.getPathInfo();
 		String[] pathParts = pathInfo.split("/");
-		try {
+		try { 
 			type = pathParts[1];
 			InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
 			if (is != null) {
