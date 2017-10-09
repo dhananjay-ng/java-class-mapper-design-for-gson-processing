@@ -1,7 +1,7 @@
 package student.data;
 
 public class StudentServiceException extends ServiceException {
-
+	
 	private static final long serialVersionUID = 1L;
 
 	StudentServiceException(String s) {

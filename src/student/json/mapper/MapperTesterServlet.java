@@ -3,7 +3,9 @@ package student.json.mapper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -92,7 +94,11 @@ public class MapperTesterServlet extends HttpServlet {
 			bk.setId(1);
 			bk.setName("XYZ");
 			bk.setAuthor(author);
-			//out.println(new Gson().toJson(bk));
+			List<String> genereList=new ArrayList<>();
+			genereList.add("Adventure");
+			genereList.add("Sci-Fi");
+			bk.setGenere(genereList);
+			out.println(new Gson().toJson(bk));
 			
 			JsonParser parser = new JsonParser();
 			JsonElement jsonTree = parser.parse(jsonText);
@@ -117,37 +123,12 @@ public class MapperTesterServlet extends HttpServlet {
 			    Book bk1 =new Book();
 			    ErrorMessages errorsMessages=new ErrorMessages();
 			    MappingHandler mp=new  MappingHandler();
-			    mp.mapFormToBo("test.Book",request,jsonText,  bk1,
-						 errorsMessages,Book.class);
-
-out.println(new Gson().toJson(bk1, Book.class));			}
-			
+			    mp.mapFormToBo("test.Book",request,jsonText,bk1,errorsMessages,Book.class);
+			    out.println(new Gson().toJson(bk1, Book.class));			
+		    }
 
 		}
 		
 	}
-	
-	/*public static Mappings getMappings() {
-
-	    Mappings mappings = new Mappings();
-
-	    final MappingSource MAP = MappingSource.MAP;
-
-	    mappings.addMapping(MAP, "id", "id", String.class, 0, true);
-	    mappings.addMapping(MAP, "name", "name", String.class, 0, true);
-	    mappings.addMapping(MAP, "birthDate", "birthDate", Date.class, 0, true);
-	    mappings.addMapping(MAP, "joinDate", "joinDate", Date.class, 0, true);
-	    mappings.addMapping(MAP, "gender", "gender", String.class, 0, true);
-	    mappings.addMapping(MAP, "standard", "standard", Integer.class, 0, true);
-	    mappings.addMapping(MAP, "division", "division", String.class, 0, true);
-	    mappings.addMapping(MAP, "rollNumber", "rollNumber", Integer.class, 0, true);
-
-	    
-	    return mappings;
-
-	}*/
-
-	
-
-	
+		
 }

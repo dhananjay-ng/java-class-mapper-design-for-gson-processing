@@ -1,9 +1,19 @@
 package test;
 
+import java.util.List;
+
 public class Book {
 private int id;
 private String name;
 private Author author;
+private List<String> genere;
+
+public List<String> getGenere() {
+	return genere;
+}
+public void setGenere(List<String> genere) {
+	this.genere = genere;
+}
 public int getId() {
 	return id;
 }

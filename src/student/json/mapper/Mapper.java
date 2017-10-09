@@ -1,11 +1,13 @@
 package student.json.mapper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,13 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import student.data.Student;
-import test.Book;
-import test.Author;
+import com.google.gson.JsonParser;;
 
 public class Mapper {
 	private final Mappings mappings;
@@ -169,6 +168,7 @@ public class Mapper {
 	}
 
 	PropertyUtils propertyUtils = new PropertyUtils();
+	
 
 	public void mapToBo() {
 		JsonParser parser = new JsonParser();
@@ -205,11 +205,45 @@ public class Mapper {
 						e.printStackTrace();
 					}
 				  }
-				try {
-					Field f1 = resource.getDeclaredField(mapping.boPropertyName);
-				f1.setAccessible(true);
+				  else if(jc.isJsonArray()){
+					  try {
+						value=mapping.type.newInstance();
+			            JsonArray jsonArray = jc.getAsJsonArray();//read as array
+			            List<Object> lt=null;
+			            if(mapping.type==ArrayList.class){
+			                lt= new ArrayList<Object>();
+			            	for(JsonElement jsonElement:jsonArray){	
+			            		if(jsonElement.isJsonPrimitive()){
+			            			lt.add(parseValue(mapping, jsonElement.getAsString()));
+			            		}
+			            		else if(jsonElement.isJsonObject()){
+			            			//to_do
+			            		}
+			            	}
+			            	
+			            }
+			            value=lt;
 
-				f1.set(businessObject, value);
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				  }
+				try {
+					
+					Field f1 = resource.getDeclaredField(mapping.boPropertyName);
+				    f1.setAccessible(true);
+				    f1.set(businessObject, value);
+				   
+					/*String methodName = "set" + mapping.jsonPropertyName.substring(0, 1).toUpperCase() + mapping.jsonPropertyName.substring(1);
+				    Method method =resource.getMethod(methodName,getParameterType);
+				    
+				    method.invoke(businessObject, value);
+*/
+				    
 			} catch (RuntimeException e) {
 				throw e;
 			} catch (Throwable e) {
@@ -220,7 +254,7 @@ public class Mapper {
 		}
 	}
 
-	public void mapToJson() {
+		public void mapToJson() {
 		for (Mapping<?> mapping : mappings.values()) {
 			if (mapping.direction == MappingDirection.TO_BO_ONLY) {
 				continue;
