@@ -18,7 +18,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;;
+import com.google.gson.JsonParser;
+import test.Author;
+import test.Book;
 
 public class Mapper {
 	private final Mappings mappings;
@@ -181,6 +183,9 @@ public class Mapper {
 			}
 				  JsonElement jc=jsonObject.get(mapping.jsonPropertyName);
 				  Object value = null;
+				  if(jc==null){
+					  continue;
+				  }
 				  if(jc.isJsonPrimitive()) {
 						String textValue = getJsonPropertyValue(mapping.jsonPropertyName, mapping.source,mapping.type);
 						System.out.println(textValue);
@@ -233,11 +238,11 @@ public class Mapper {
 					}
 				  }
 				try {
-					
-					Field f1 = resource.getDeclaredField(mapping.boPropertyName);
+					PropertyUtils.setSimpleProperty(businessObject, mapping.boPropertyName, value);
+					/*Field f1 = resource.getDeclaredField(mapping.boPropertyName);
 				    f1.setAccessible(true);
 				    f1.set(businessObject, value);
-				   
+				*/   
 					/*String methodName = "set" + mapping.jsonPropertyName.substring(0, 1).toUpperCase() + mapping.jsonPropertyName.substring(1);
 				    Method method =resource.getMethod(methodName,getParameterType);
 				    
@@ -293,7 +298,10 @@ public class Mapper {
 			value = toText((Mapping<String>) mapping, textValue);
 		} else if (Boolean.class.isAssignableFrom(type) || boolean.class.isAssignableFrom(type)) {
 			value = toBoolean((Mapping<Boolean>) mapping, textValue);
-		} else {
+		} 
+		else if (ArrayList.class.isAssignableFrom(type) || boolean.class.isAssignableFrom(type)) {
+			value = toBoolean((Mapping<Boolean>) mapping, textValue);
+		}else {
 			throw new MappingException(//
 					"Mapping to " + mapping.boPropertyName + "(" + type + ") is not supported.");
 		}

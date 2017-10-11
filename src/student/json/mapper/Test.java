@@ -1,5 +1,9 @@
 package student.json.mapper;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.beanutils.PropertyUtils;
+
 import test.Author;
 import test.Book;
 
@@ -22,10 +26,32 @@ public class Test {
 			
 			e.printStackTrace();
 		}*/
-		Book bk=new Book();
+		/*Book bk=new Book();
 		System.out.println(Author.class.getName());
-				
-	
+		*/		
+	  Author au=new Author();
+		Book myBean=new Book();
+	      try {
+	 		PropertyUtils.setSimpleProperty(myBean, "id", 1);
+			PropertyUtils.setSimpleProperty(myBean, "name", "Dhananjay");
+			PropertyUtils.setSimpleProperty(au, "firstName", "DGN");
+			PropertyUtils.setSimpleProperty(au, "lastName", "DGN");
+			PropertyUtils.setSimpleProperty(myBean, "author", au);
+			
+			
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	      System.out.println(myBean.getId());
+	      System.out.println(myBean.getAuthor().getFirstName());
+	      
 	}
 
 }

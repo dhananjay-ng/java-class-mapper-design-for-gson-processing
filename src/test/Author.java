@@ -3,6 +3,10 @@ package test;
 public class Author {
 	
 	private String firstName;
+	
+	public Author() {
+		super();
+	}
 	public String getFirstName() {
 		return firstName;
 	}

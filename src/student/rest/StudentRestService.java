@@ -27,7 +27,9 @@ import student.data.Student;
 import student.data.StudentService;
 import student.json.mapper.ErrorMessages;
 import student.json.mapper.Mapper;
+import student.json.mapper.MappingHandler;
 import student.json.mapper.MessageName;
+import test.Book;
 
 @WebServlet("/rest/*")
 public class StudentRestService extends HttpServlet {
@@ -37,53 +39,11 @@ public class StudentRestService extends HttpServlet {
 		super();
 	}
 
-	public String getPathParameterId(HttpServletRequest request) {
-		String pathInfo = request.getPathInfo();
-		String[] pathParts = pathInfo.split("/");
-		String id;
-		try {
-			id = pathParts[2];
-		} catch (IndexOutOfBoundsException e) {
-			return "";
-		}
-		return id;
-	}
-
-	public String getPathParameterClass(HttpServletRequest request) {
-		String type;
-		String pathInfo = request.getPathInfo();
-		String[] pathParts = pathInfo.split("/");
-		try { 
-			type = pathParts[1];
-			InputStream is = StudentRestService.class.getResourceAsStream("/config.properties");
-			if (is != null) {
-				Properties p = new Properties();
-				p.load(is);
-				return p.getProperty(type);
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return "";
-
-		} catch (IndexOutOfBoundsException e) {
-			return "";
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
-
-	}
-
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("application/json;charset=UTF-8");
-		/*
-		 * String id = getPathParameterId(request); String type =
-		 * getPathParameterClass(request);
-		 */
+		
 		EndPoint endPoint = new URLHandler().getEndPoint(request);
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
@@ -96,9 +56,7 @@ public class StudentRestService extends HttpServlet {
 			if (endPoint.id == null || endPoint.id.isEmpty()) {
 				try (PrintWriter out = response.getWriter()) {
 					try {
-						// operation(id, type, MethodeNameConstants.LIST,
-						// request, response);
-						out.println(gson.toJson(endPoint.service.list(endPoint.query)));
+							out.println(gson.toJson(endPoint.service.list(endPoint.query)));
 
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -141,16 +99,20 @@ public class StudentRestService extends HttpServlet {
 					Type type = new TypeToken<Map<String, String>>() {}.getType();
 					Map<String, String> data = gson.fromJson(jsonText, type);
 					ErrorMessages errorsMessages = new ErrorMessages();
-					Mapper mapper = new Mapper(endPoint.mappings,DateFormatConstants.YYYY_MM_DD, jsonText, request, data,
+					    
+					MappingHandler mp=new  MappingHandler();
+					mp.mapFormToBo(endPoint.mappings,request,jsonText,obj,errorsMessages,endPoint.getResource());
+					
+					/*Mapper mapper = new Mapper(endPoint.mappings,DateFormatConstants.YYYY_MM_DD, jsonText, request, data,
 							obj, errorsMessages, endPoint.getResource());
 
 					//endPoint.service.add(new Gson().fromJson(request.getReader(), endPoint.getResource()));
-				    mapper.mapToBo();
+				    mapper.mapToBo();*/
 					try (PrintWriter out = response.getWriter()) {
 
 				    if(!errorsMessages.getErrors().isEmpty()){
 				    	System.out.println(errorsMessages.getErrors());
-				    	out.println("Following Error Occured:"+errorsMessages.getErrors());
+				    	out.println("Following Errors Occured:"+errorsMessages.getErrors());
 				    }
 				    else{
 					    String id=endPoint.service.add(obj);

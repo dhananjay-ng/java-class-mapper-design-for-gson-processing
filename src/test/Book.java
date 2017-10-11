@@ -8,6 +8,9 @@ private String name;
 private Author author;
 private List<String> genere;
 
+public Book() {
+	super();
+}
 public List<String> getGenere() {
 	return genere;
 }

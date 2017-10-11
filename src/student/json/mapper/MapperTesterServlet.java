@@ -98,12 +98,12 @@ public class MapperTesterServlet extends HttpServlet {
 			genereList.add("Adventure");
 			genereList.add("Sci-Fi");
 			bk.setGenere(genereList);
-			out.println(new Gson().toJson(bk));
-			
+			/*out.println(new Gson().toJson(bk));
+			*/
 			JsonParser parser = new JsonParser();
 			JsonElement jsonTree = parser.parse(jsonText);
 			if(jsonTree.isJsonObject()){
-			    JsonObject jsonObject = jsonTree.getAsJsonObject();
+			  /*  JsonObject jsonObject = jsonTree.getAsJsonObject();
 
 			    JsonElement f1 = jsonObject.get("id");
 
@@ -119,7 +119,7 @@ public class MapperTesterServlet extends HttpServlet {
 				   // out.println(f1+"__"+f2+"_"+f3+"__"+f4+"_"+f5);
 
 
-			    }
+			    }*/
 			    Book bk1 =new Book();
 			    ErrorMessages errorsMessages=new ErrorMessages();
 			    MappingHandler mp=new  MappingHandler();

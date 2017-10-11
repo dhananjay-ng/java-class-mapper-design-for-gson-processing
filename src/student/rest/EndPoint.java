@@ -11,6 +11,7 @@ public class EndPoint {
     String query;
     String id;
     Mappings mappings;
+    String resourceClassName;
 
     public Mappings getMappings() {
 		return mappings;
