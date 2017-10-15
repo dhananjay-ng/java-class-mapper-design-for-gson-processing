@@ -9,7 +9,15 @@ private String name;
 private Author author;
 private List<String> genere;
 private Map<String,String> mapTest;
+private List<Author> authorList;
 
+
+public List<Author> getAuthorList() {
+	return authorList;
+}
+public void setAuthorList(List<Author> authorList) {
+	this.authorList = authorList;
+}
 public Map<String, String> getMapTest() {
 	return mapTest;
 }

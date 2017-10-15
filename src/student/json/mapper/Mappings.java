@@ -1,6 +1,12 @@
 package student.json.mapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import test.Author;
 
 public class Mappings {
 
@@ -19,6 +25,12 @@ public class Mappings {
     public final <T> Mapping<T> addMapping(MappingSource source, String jsonPropertyName, String boPropertyName,
             Class<T> type, int scale, boolean trim) {
         Mapping<T> mapping = new Mapping<T>(source, jsonPropertyName, boPropertyName, type, scale, trim);
+        mappings.put(jsonPropertyName, mapping);
+        return mapping;
+    }
+    public final <T> Mapping<T> addMappingWithSubType(MappingSource source, String jsonPropertyName, String boPropertyName,
+            Class<T> type, int scale, boolean trim,Class<?> subType) {
+        Mapping<T> mapping = new Mapping<T>(source, jsonPropertyName, boPropertyName, type, scale, trim,subType);
         mappings.put(jsonPropertyName, mapping);
         return mapping;
     }

@@ -28,7 +28,9 @@ public class BookTest {
 		Map<String,String> mp=new HashMap<>();
 		mp.put("Dhananjay", "XYZ");
 		bk.setMapTest(mp);
-		
+		List<Author> authorList=new ArrayList<Author>();
+		authorList.add(author);
+		bk.setAuthorList(authorList);
 		System.out.println(new Gson().toJson(bk,Book.class));
 	}
 

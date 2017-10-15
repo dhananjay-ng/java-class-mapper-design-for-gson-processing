@@ -51,6 +51,8 @@ public class Mapping<T> {
     final boolean trim;
     boolean skipBlanks = false;
     final int scale;
+     Class<?> subType=null;
+
     MappingDirection direction = MappingDirection.BOTH;
 
     public Mapping<T> setDirection(MappingDirection direction) {
@@ -73,6 +75,17 @@ public class Mapping<T> {
 
     final Map<String, MappingMessage> messages = new HashMap<String, MappingMessage>();
 
+   
+    public Mapping(MappingSource source, String jsonPropertyName, String boPropertyName, Class<T> type, int scale,
+            boolean trim,Class<?> subType) {
+        this.source = source;
+        this.jsonPropertyName = jsonPropertyName;
+        this.boPropertyName = boPropertyName;
+        this.type = type;
+        this.scale = scale;
+        this.trim = trim;
+        this.subType=subType;
+    }
     public Mapping(MappingSource source, String jsonPropertyName, String boPropertyName, Class<T> type, int scale,
             boolean trim) {
         this.source = source;
@@ -82,5 +95,4 @@ public class Mapping<T> {
         this.scale = scale;
         this.trim = trim;
     }
-
   }

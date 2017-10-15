@@ -1,12 +1,11 @@
 package student.json.mapper;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,12 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import test.Author;
-import test.Book;
 
 public class Mapper {
 	private final Mappings mappings;
@@ -197,19 +195,27 @@ public class Mapper {
 					
 				  }
 				  else if(jc.isJsonObject()) {
-					  try {
+					 
+						  if(mapping.type==HashMap.class){
+							  Map<Object,Object> mp=new HashMap<>();
+							  mp=(Map<Object, Object>) new Gson().fromJson(jc, mapping.type);
+							  value=mp;
+						  }
+						  else {
+							  try {
 						 value=mapping.type.newInstance();
 						  ErrorMessages errorsMessages=new ErrorMessages();
 						    MappingHandler mp=new  MappingHandler();
 						    mp.mapFormToBo(mapping.type.getName(),request,jc.toString(),value,
 									 errorsMessages,mapping.type);
-
+						  
 					} catch (InstantiationException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
 				  }
+			  }
 				  else if(jc.isJsonArray()){
 					  try {
 						value=mapping.type.newInstance();
