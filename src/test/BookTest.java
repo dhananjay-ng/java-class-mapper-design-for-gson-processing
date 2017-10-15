@@ -1,5 +1,14 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.map.HashedMap;
+
+import com.google.gson.Gson;
+
 public class BookTest {
 
 	public static void main(String[] args) {
@@ -11,8 +20,16 @@ public class BookTest {
 		author.setLastName("Nagargoje");
 		bk.setId(1);
 		bk.setName("XYZ");
+		bk.setAuthor(author);
+		List<String> genere=new ArrayList<String>();
+		genere.add("Adventure");
+		genere.add("Action");
+		bk.setGenere(genere);
+		Map<String,String> mp=new HashMap<>();
+		mp.put("Dhananjay", "XYZ");
+		bk.setMapTest(mp);
 		
-		System.out.println(bk);
+		System.out.println(new Gson().toJson(bk,Book.class));
 	}
 
 }

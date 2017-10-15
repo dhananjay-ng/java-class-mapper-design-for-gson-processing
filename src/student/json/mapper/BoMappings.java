@@ -2,7 +2,7 @@ package student.json.mapper;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import test.Author;
 
@@ -38,6 +38,7 @@ public class BoMappings {
 			mappings.addMapping(MAP, "name", "name", String.class, 0, true);
 			mappings.addMapping(MAP, "author", "author", Author.class, 0, true);
 			mappings.addMapping(MAP, "genere", "genere", ArrayList.class, 0, true);
+			mappings.addMapping(MAP, "mapTest", "mapTest", LinkedHashMap.class, 0, true);
 
 
 		}

@@ -1,13 +1,21 @@
 package test;
 
 import java.util.List;
+import java.util.Map;
 
 public class Book {
 private int id;
 private String name;
 private Author author;
 private List<String> genere;
+private Map<String,String> mapTest;
 
+public Map<String, String> getMapTest() {
+	return mapTest;
+}
+public void setMapTest(Map<String, String> mapTest) {
+	this.mapTest = mapTest;
+}
 public Book() {
 	super();
 }

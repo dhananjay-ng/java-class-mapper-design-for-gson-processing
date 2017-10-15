@@ -216,10 +216,9 @@ public class Mapper {
 			            JsonArray jsonArray = jc.getAsJsonArray();//read as array
 			            List<Object> lt=null;
 			            if(mapping.type==ArrayList.class){
-			                lt= new ArrayList<Object>();
 			            	for(JsonElement jsonElement:jsonArray){	
 			            		if(jsonElement.isJsonPrimitive()){
-			            			lt.add(parseValue(mapping, jsonElement.getAsString()));
+			            			((ArrayList<Object>) value).add(parseValue(mapping, jsonElement.getAsString()));
 			            		}
 			            		else if(jsonElement.isJsonObject()){
 			            			//to_do
@@ -227,7 +226,7 @@ public class Mapper {
 			            	}
 			            	
 			            }
-			            value=lt;
+			           // value=lt;
 
 					} catch (InstantiationException e) {
 						// TODO Auto-generated catch block
@@ -300,7 +299,7 @@ public class Mapper {
 			value = toBoolean((Mapping<Boolean>) mapping, textValue);
 		} 
 		else if (ArrayList.class.isAssignableFrom(type) || boolean.class.isAssignableFrom(type)) {
-			value = toBoolean((Mapping<Boolean>) mapping, textValue);
+			value = toText((Mapping<String>) mapping, textValue);
 		}else {
 			throw new MappingException(//
 					"Mapping to " + mapping.boPropertyName + "(" + type + ") is not supported.");
